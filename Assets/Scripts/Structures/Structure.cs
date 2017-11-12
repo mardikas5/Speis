@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class Structure : Entity
 {
+    public StructureTemplate Template;
+
     public bool Initialized = false;
-    
-    public List<Resource> BuildingCost;
     
     public List<Connector> Connections;
     
@@ -13,8 +13,10 @@ public class Structure : Entity
     
     public event Action OnDestroyed;
     
-    public Structure()
+    public Structure(StructureTemplate structureTemplate) 
     {
+        Template = structureTemplate;
+
         Initialize();   
     }
     

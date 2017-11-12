@@ -74,7 +74,7 @@ class Program
     }
 #endif
 
-    static void StandardStart()
+    public static void StandardStart()
     {
         Simulation sim = new Simulation();
         sim.Initialize();
@@ -84,15 +84,16 @@ class Program
         StructureDatabase structDB = new StructureDatabase();
     }
 
-    static void EnterTestValues()
+    public static void EnterTestValues()
     {
         ResourceDatabase.Instance.Populate();
         StructureDatabase.Instance.Populate();
 
-        Station t = new Station();
-
-        t.Register(new Storage());
-        t.Register(new OreProcessing());
+        Station t = new Station(new StructureTemplate());
+        StorageTemplate storageTemplate = new StorageTemplate();
+        t.Register(new Storage(storageTemplate));
+        StructureTemplate ore = StructureDatabase.Instance.Structures.Where(name => name.Name == "Ore Processing").FirstOrDefault();
+        t.Register(new ResourceProducer(ore as ResourceProducerTemplate));
     }
 
     static void Main(string[] args)

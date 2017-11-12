@@ -219,10 +219,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GameLogic.cs" />
     <Compile Include="Assets\Scripts\ConsoleExtentions.cs" />
     <Compile Include="Assets\Scripts\Databases\EntityDatabase.cs" />
     <Compile Include="Assets\Scripts\Databases\ResourceDatabase.cs" />
     <Compile Include="Assets\Scripts\Databases\StructureDatabase.cs" />
+    <Compile Include="Assets\Scripts\Debug\MyDebug.cs" />
     <Compile Include="Assets\Scripts\Logic\Simulation.cs" />
     <Compile Include="Assets\Scripts\obj\Debug\netcoreapp2.0\consoleApp.AssemblyInfo.cs" />
     <Compile Include="Assets\Scripts\Player\Input.cs" />
@@ -237,6 +239,7 @@
     <Compile Include="Assets\Scripts\Structures\Station.cs" />
     <Compile Include="Assets\Scripts\Structures\Storage.cs" />
     <Compile Include="Assets\Scripts\Structures\Structure.cs" />
+    <Compile Include="Assets\Scripts\Structures\StructureTemplate.cs" />
     <Compile Include="Assets\Scripts\Structures\Transaction.cs" />
     <Compile Include="Assets\Scripts\Unit\Enemy.cs" />
     <Compile Include="Assets\Scripts\Unit\Ship.cs" />

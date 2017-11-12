@@ -4,7 +4,7 @@ using System.Linq;
 
 public class StructureDatabase : Singleton<StructureDatabase>
 {
-    public List<Structure> Structures = new List<Structure>();
+    public List<StructureTemplate> Structures = new List<StructureTemplate>();
     
     public StructureDatabase()
     {
@@ -13,7 +13,7 @@ public class StructureDatabase : Singleton<StructureDatabase>
     
     public void Populate()
     {
-        ResourceProducer Producer = new ResourceProducer();
+        ResourceProducerTemplate Producer = new ResourceProducerTemplate();
         Producer.Name = "Mining Bay";
         Producer.Inputs = null;
         
@@ -26,10 +26,10 @@ public class StructureDatabase : Singleton<StructureDatabase>
         
         Structures.Add(Producer);
         
-        Producer = new ResourceProducer();
+        Producer = new ResourceProducerTemplate();
         Producer.Name = "GreenHouse";
         
-        Producer = new ResourceProducer();
+        Producer = new ResourceProducerTemplate();
         Producer.Name = "Atmosphere Recycling";
         
         

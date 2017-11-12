@@ -5,7 +5,7 @@ using System.Linq;
 public class Station : Structure
 {
     public List<Structure> Parts;
-    
+
     public List<T> PartsOfType<T>() where T : Structure
     {
         List<Structure> parts = Parts.Where(x => x.GetType() == typeof(T)).ToList();
@@ -23,6 +23,13 @@ public class Station : Structure
         return returnValues;
     }
     
+
+    public Station(StructureTemplate structureTemplate) : base(structureTemplate)
+    {
+
+    }
+
+
     public override void Initialize()
     {
         Owner = this;

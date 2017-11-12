@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+#if old
 public class OreProcessing : ResourceProducer
 {
     public override void Initialize()
@@ -15,3 +16,4 @@ public class OreProcessing : ResourceProducer
             );
     }
 }
+#endif
