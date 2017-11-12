@@ -1,0 +1,9 @@
+/home/ubuntu/workspace/consoleApp/bin/Debug/netcoreapp2.0/consoleApp.deps.json
+/home/ubuntu/workspace/consoleApp/bin/Debug/netcoreapp2.0/consoleApp.runtimeconfig.json
+/home/ubuntu/workspace/consoleApp/bin/Debug/netcoreapp2.0/consoleApp.runtimeconfig.dev.json
+/home/ubuntu/workspace/consoleApp/bin/Debug/netcoreapp2.0/consoleApp.dll
+/home/ubuntu/workspace/consoleApp/bin/Debug/netcoreapp2.0/consoleApp.pdb
+/home/ubuntu/workspace/consoleApp/obj/Debug/netcoreapp2.0/consoleApp.csproj.CoreCompileInputs.cache
+/home/ubuntu/workspace/consoleApp/obj/Debug/netcoreapp2.0/consoleApp.AssemblyInfo.cs
+/home/ubuntu/workspace/consoleApp/obj/Debug/netcoreapp2.0/consoleApp.dll
+/home/ubuntu/workspace/consoleApp/obj/Debug/netcoreapp2.0/consoleApp.pdb

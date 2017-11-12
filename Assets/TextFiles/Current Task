@@ -1,0 +1,8 @@
+StationBuilding
+
+    -Make resourceproducer work.
+    -Placing down parts.
+    -Parts are part of station.
+    -Parts generate items for storage of station.
+    -Parts are placed by connectors.
+    

@@ -1,0 +1,37 @@
+Space station building sim.
+
+
+Improve your station with various parts.
+    -Hangar             : able to station a number of ships
+    -Ore processing     : processes ore that miners have returned to the station
+    -Science            : able to unlock new technologies to be used
+    -Engineering        : able to research new parts for ships
+    -Workshop           : able to refit old ships and come up with new designs
+    -Bridge             : required for directing ships
+    -Cargo Bay          : holds storage
+    -Control Room       : gives detailed feedback about various parts of the station
+    -Sensor Bay         : detects and gives feedback about information on the outside of the station
+    -Weapons Control    : allows the station to use a number of turrets
+    -Turrets            : used for defense of the station
+    -Crew Quarters      : increases the number of members available to the station
+    -Medical Bay        : can deal with crew problems that might arise
+    -Core               : starting block that is self sufficient, contains everything needed
+    -Life Support       : required for crew to stay alive on board, required per number of crew.
+
+Send out units on various tasks.
+    -Mine resources
+    -Explore wrecks
+    -Fight others
+    
+Interactions
+    -UI
+        -Sending out units:
+            -Mining : Select resource, select number of miners to send out, will mine indefinitely.
+            -Wreck exploration / exploration : Select station, start new task, explore, select units to send out on exploration.
+            or Create squadron, set squadron task on Exploration, start the task.
+            
+            -Fighting : Create squadron, assign units to squadron, select a target on the map, select an action attack: select the squadron.
+    -Map
+        -Slanted downwards view of a sector in space.
+            -Objects become visible dependent on scan range / base upgrades.
+        
