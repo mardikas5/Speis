@@ -1,5 +1,6 @@
 using System;
 
+//use ID
 public class Entity
 {
     public Position pos = new Position(0,0);

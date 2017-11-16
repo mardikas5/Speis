@@ -1,16 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-public class Storage : Structure, ITransactionable
+public class Storage : StructureBehaviour, ITransactionable
 {
     public List<Resource> Stored {get; set;}
     
     public float Volume = 300;
-    
-    public Storage(StorageTemplate storageTemplate) : base(storageTemplate)
-    {
-        Volume = storageTemplate.Volume;
-    }
 
     public override void Initialize()
     {

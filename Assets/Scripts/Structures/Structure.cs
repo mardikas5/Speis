@@ -1,28 +1,37 @@
 using System;
 using System.Collections.Generic;
 
+
 public class Structure : Entity
 {
-    public StructureTemplate Template;
-
-    public bool Initialized = false;
+    public string Name;
     
-    public List<Connector> Connections;
+    public bool Initialized = false;
     
     public Station Owner;
     
+    
+    public List<Resource> BuildingCost;
+    
+    public List<Connector> Connections;
+    
+    //serialize.
+    public List<StructureBehaviour> StructureBehaviours;
+    
+    
     public event Action OnDestroyed;
     
-    public Structure(StructureTemplate structureTemplate) 
+    public Structure() 
     {
-        Template = structureTemplate;
-
         Initialize();   
     }
     
     public override void Tick()
     {
-        
+        foreach (StructureBehaviour t in StructureBehaviours)
+        {
+            t.Tick();
+        }
     }
     
     public virtual void Initialize()

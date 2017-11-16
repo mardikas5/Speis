@@ -6,27 +6,33 @@ public class Station : Structure
 {
     public List<Structure> Parts;
 
-    public List<T> PartsOfType<T>() where T : Structure
+    public List<T> PartsOfType<T>() where T : StructureBehaviour
     {
-        List<Structure> parts = Parts.Where(x => x.GetType() == typeof(T)).ToList();
         List<T> returnValues = new List<T>();
         
-        for (int i = 0 ; i < parts.Count;i++)
+        for (int i = 0; i < Parts.Count; i++)
         {
-            T part = parts[i] as T;
-            if (part != null)
+            if (Parts[i].StructureBehaviours == null)
             {
-                returnValues.Add(part);
+                continue;   
+            }
+
+            
+            for (int k = 0; k < Parts[i].StructureBehaviours.Count; k++)
+            {
+                if (Parts[i].StructureBehaviours[k] == null)
+                {
+                    continue;   
+                }
+                
+                if (Parts[i].StructureBehaviours[k].GetType() == typeof(T))
+                {
+                    returnVales.Add(Parts[i].StructureBehaviours[k]);
+                }
             }
         }
         
         return returnValues;
-    }
-    
-
-    public Station(StructureTemplate structureTemplate) : base(structureTemplate)
-    {
-
     }
 
 

@@ -2,18 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ResourceProducer : Structure
+
+public class ResourceProducer : StructureBehaviour
 {
-    new ResourceProducerTemplate Template;
+    public List<Resource> Inputs;
+    public List<Resource> Outputs;
     
     public override void Tick()
     {
         Produce();
-    }
-    
-    public ResourceProducer(ResourceProducerTemplate structureTemplate) : base(structureTemplate)
-    {
-        Template = structureTemplate;
     }
 
     public override void Initialize()
@@ -36,15 +33,15 @@ public class ResourceProducer : Structure
             resources.AddRange(Storages[i].Stored);
         }
         
-        float productionMultiplier = Resource.SmallestNormalizedAvailable(Template.Inputs, resources);
+        float productionMultiplier = Resource.SmallestNormalizedAvailable(Inputs, resources);
         
         List<Resource> produced = new List<Resource>();
         
-        for (int i = 0; i < Template.Inputs.Count; i++)
+        for (int i = 0; i < Inputs.Count; i++)
         {
-            float AmountLeft = Template.Inputs[i].Amount;
+            float AmountLeft = Inputs[i].Amount;
             
-            List<Resource> StoredNeededResource = resources.Where(x => x.Base == Template.Inputs[i].Base).ToList();
+            List<Resource> StoredNeededResource = resources.Where(x => x.Base == Inputs[i].Base).ToList();
             
             for (int k = 0; k < StoredNeededResource.Count; k++)
             {
@@ -64,9 +61,9 @@ public class ResourceProducer : Structure
             }
         }
         
-        for (int i = 0; i < Template.Outputs.Count; i++)
+        for (int i = 0; i < Outputs.Count; i++)
         {
-            produced.Add(Template.Outputs[i].Copy(productionMultiplier));
+            produced.Add(Outputs[i].Copy(productionMultiplier));
         }
 
         MyDebug.DebugWrite("Produced: " + produced.Count);
