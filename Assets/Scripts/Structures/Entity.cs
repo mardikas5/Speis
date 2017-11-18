@@ -1,14 +1,12 @@
 using System;
 
-//use ID
+[System.Serializable]
 public class Entity
 {
     public Position pos = new Position(0,0);
     
-    public string Name = "betts";
-    public string ID = "xD";
-    
-    public char Symbol = 'E';
+    public string Name = "unNamedEntity";
+    public string ID = "xD"; //make into GUID
     
     public virtual void Tick()
     {

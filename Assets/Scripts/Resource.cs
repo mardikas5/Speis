@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ResourceBase
+[System.Serializable]
+public class ResourceBase : ScriptableObject //ScriptableObject=
 {
     //Sprite?
     //Id?
@@ -51,6 +52,7 @@ public class ResourceBase
     }
 }
 
+[System.Serializable]
 public class Resource
 {
     public readonly ResourceBase Base;
@@ -97,7 +99,7 @@ public class Resource
     }
     
 
-    public override bool Equals(Object obj)
+    public bool Equals(Object obj)
     {
         Resource res = obj as Resource; 
         if (res == null)
@@ -106,39 +108,66 @@ public class Resource
             return Base == res.Base;
     }
     
+
+    public static List<Resource> CombineInstancesOfResources(List<Resource> resources)
+    {
+        List<Resource> output = new List<Resource>();
+        
+        for (int i = 0; i < resources.Count; i++)
+        {
+            if (output.Contains(resources[i]))
+            {
+                continue;
+            }
+            
+            output.Add(resources[i].Copy(0));
+            resources.ForEach(x => 
+            {
+                if (x.Equals(resources[i]))
+                {
+                    resources[i].Amount += x.Amount;
+                }
+            });
+        }
+        
+        return output;
+    }
+
+    public static Dictionary<Resource, float> NormalizedAvailableAmounts(List<Resource> needed, List<Resource> available)
+    {
+        Dictionary<Resource, float> availabilities = new Dictionary<Resource, float>();
+        
+        List<Resource> Needed = CombineInstancesOfResources(needed);
+        List<Resource> Available = CombineInstancesOfResources(available);
+        
+        for (int i = 0; i < Needed.Count; i++)
+        {
+            Resource availRes = Available.FirstOrDefault(x => x.Equals(Needed[i]));
+            
+            float comparison = 0f;
+            
+            if (availRes != null)
+            {
+                comparison = ( availRes.amount / Needed[i].Amount);
+            }
+            
+            availabilities.Add(new KeyValuePair(Needed[i].Copy(0), comparison));
+        }
+        
+        return availabilities;
+    }
     
-    
-    //all needed resources have to occur only once.
     public static float SmallestNormalizedAvailable(List<Resource> needed, List<Resource> available)
     {
         float smallest = 1f;
         
-        if (needed == null || needed.Count == 0)
-        {
-            return 1f;
-        }
+        Dictionary<Resource, float> avail = NormalizedAvailableAmounts(needed, available);
         
-        for (int i = 0; i < needed.Count; i++)
+        foreach (KeyValuePair k in avail)
         {
-            List<Resource> resources = available.Where(x => x.Equals(needed[i])).ToList();
-            
-            if (resources == null || resources.Count == 0)
+            if (k.Value < smallest)
             {
-                return 0;
-            }
-            
-            float amount = 0;
-            
-            for (int k = 0; k < resources.Count;k++ )
-            {
-                amount += resources[k].Amount;
-            }
-            
-            float comparison = (amount / needed[i].Amount);
-                
-            if (smallest > comparison)
-            {
-                smallest = comparison;
+                smallest = k.Value;
             }
         }
         

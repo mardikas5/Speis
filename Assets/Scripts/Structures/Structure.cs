@@ -2,21 +2,20 @@ using System;
 using System.Collections.Generic;
 
 
+[System.Serializable]
 public class Structure : Entity
 {
-    public string Name;
-    
     public bool Initialized = false;
+    
     
     public Station Owner;
     
-    
     public List<Resource> BuildingCost;
     
-    public List<Connector> Connections;
     
     //serialize.
-    public List<StructureBehaviour> StructureBehaviours;
+    protected List<StructureBehaviour> StructureBehaviours;
+    
     
     
     public event Action OnDestroyed;
@@ -26,11 +25,32 @@ public class Structure : Entity
         Initialize();   
     }
     
+    public bool AddBehaviour(StructureBehaviours behaviour)
+    {
+        if (behaviour != null)
+        {
+            return StructureBehaviours.Add(behaviour);
+        }
+        return false;
+    }
+    
+    public bool RemoveBehaviour(StructureBehaviours behaviour)
+    {
+        if (behaviour != null)
+        {
+           return StructureBehaviours.Remove(behaviour);
+        }
+        return false;
+    }
+    
     public override void Tick()
     {
         foreach (StructureBehaviour t in StructureBehaviours)
         {
-            t.Tick();
+            if (t != null)
+            {
+                t.Tick();
+            }
         }
     }
     

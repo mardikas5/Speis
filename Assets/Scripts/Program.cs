@@ -21,6 +21,8 @@ class Program
 
         Station t = new Station();
         
+        Structure Bboi = new Structure();
+        Bboi.AddBehaviour(new Storage()
         //readd buildings
     }
 }

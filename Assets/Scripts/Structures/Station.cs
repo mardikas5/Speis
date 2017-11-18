@@ -17,7 +17,6 @@ public class Station : Structure
                 continue;   
             }
 
-            
             for (int k = 0; k < Parts[i].StructureBehaviours.Count; k++)
             {
                 if (Parts[i].StructureBehaviours[k] == null)

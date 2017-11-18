@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 public class Transaction
 {
     public void Transfer<T>(T From, T To, Resource Transferred) where T : ITransactionable

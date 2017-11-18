@@ -1,9 +1,21 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameLogic : MonoBehaviour {
+    
 
+    public int TicksPerSecond = 5;
+    
+    private int TickRate
+    {
+        get 
+        {
+            return 1f / (float)TicksPerSecond;
+        }
+    }
+    
+    
 	// Use this for initialization
 	void Start ()
     {
@@ -19,7 +31,7 @@ public class GameLogic : MonoBehaviour {
         {
             Simulation.Instance.Tick();
 
-            yield return new WaitForSeconds(.2f);
+            yield return new WaitForSeconds(TickRate);
         }
     }
 

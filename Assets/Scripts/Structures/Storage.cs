@@ -1,12 +1,25 @@
 using System;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class Storage : StructureBehaviour, ITransactionable
 {
     public List<Resource> Stored {get; set;}
     
     public float Volume = 300;
 
+
+    public Storage()
+    {
+        
+    }
+
+    public Storage(float volume)
+    {
+        Volume = volume;   
+    }
+    
+    
     public override void Initialize()
     {
         base.Initialize();
