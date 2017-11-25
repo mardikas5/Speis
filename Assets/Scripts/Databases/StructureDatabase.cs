@@ -4,7 +4,7 @@ using System.Linq;
 
 public class StructureDatabase : Singleton<StructureDatabase>
 {
-    public List<StructureTemplate> Structures = new List<StructureTemplate>();
+    public List<Structure> Structures = new List<Structure>();
     
     public StructureDatabase()
     {
@@ -13,25 +13,20 @@ public class StructureDatabase : Singleton<StructureDatabase>
     
     public void Populate()
     {
-        ResourceProducerTemplate Producer = new ResourceProducerTemplate();
-        Producer.Name = "Mining Bay";
-        Producer.Inputs = null;
-        
-        Producer.BuildingCost = new List<Resource>(new Resource[] { new Resource("Wood", 25) 
-        });
-        
-        Producer.Outputs = new List<Resource>(new Resource[] { new Resource("Common Metals", 5)
-        });
+        //structure mining = new structure();
+        //mining.name = "mining bay";
+        //resourceproducer producer = new resourceproducer();
+        //producer.name = "mining bay drilling";
+        //storage storage = new storage(300f);
+        //storage.name = "mining bay storage";
 
-        
-        Structures.Add(Producer);
-        
-        Producer = new ResourceProducerTemplate();
-        Producer.Name = "GreenHouse";
-        
-        Producer = new ResourceProducerTemplate();
-        Producer.Name = "Atmosphere Recycling";
-        
-        
+        //producer.inputs = null;
+       
+        //producer.outputs = new list<resource>(new resource[] { new resource("common metals", 5)
+        //});
+
+        //mining.addbehaviour<resourceproducer>(producer);
+        //mining.addbehaviour<storage>(storage);
+        //structures.add(mining);
     }
 }

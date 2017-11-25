@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+[Serializable]
 public class Singleton<T> where T : class
 { 
     public Singleton()

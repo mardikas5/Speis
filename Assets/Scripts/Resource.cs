@@ -2,60 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
-[System.Serializable]
-public class ResourceBase : ScriptableObject //ScriptableObject=
-{
-    //Sprite?
-    //Id?
-    
-    public string Name;
-    public string DisplayName;
-    
-    private ResourceBase(string Name) : this(Name, Name)
-    {
-        
-    }
-    
-    private ResourceBase(string Name, string DisplayName)
-    {
-        this.Name = Name;
-        this.DisplayName = DisplayName;
-    }
-    
-    public static ResourceBase Get(string Name)
-    {
-        if (ResourceDatabase.Instance != null)
-        {
-            ResourceBase match = ResourceDatabase.Instance.Resources.FirstOrDefault(res => res.Name == Name);
-            if (match != null)
-            {
-                return match;
-            }
-        }
-        return null;
-    }
-    
-    public static ResourceBase CreateOrGet(string Name)
-    {
-        return CreateOrGet(Name, Name);
-    }
-    
-    public static ResourceBase CreateOrGet(string Name, string DisplayName)
-    {
-        ResourceBase existing = Get(Name);
-        if (existing == null)
-        {
-            existing = new ResourceBase(Name, DisplayName);
-        }
-        return existing;
-    }
-}
+using UnityEngine;
 
 [System.Serializable]
 public class Resource
 {
-    public readonly ResourceBase Base;
+    [SerializeField]
+    //use as readonly
+    public ResourceBase Base;
     
     public string Name {get {return Base.Name;}}
     public string DisplayName {get {return Base.DisplayName;}}
@@ -98,8 +52,12 @@ public class Resource
         this.Amount = Amount;
     }
     
-
-    public bool Equals(Object obj)
+    /// <summary>
+    /// Name comparison is made.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public bool Equals(System.Object obj)
     {
         Resource res = obj as Resource; 
         if (res == null)
@@ -115,19 +73,14 @@ public class Resource
         
         for (int i = 0; i < resources.Count; i++)
         {
-            if (output.Contains(resources[i]))
+            Resource res = output.Find(x => x.Equals(resources[i]));
+
+            if (res == null)
             {
-                continue;
+                output.Add(resources[i].Copy(0));
             }
-            
-            output.Add(resources[i].Copy(0));
-            resources.ForEach(x => 
-            {
-                if (x.Equals(resources[i]))
-                {
-                    resources[i].Amount += x.Amount;
-                }
-            });
+
+            res.Amount += resources[i].Amount;
         }
         
         return output;
@@ -148,10 +101,10 @@ public class Resource
             
             if (availRes != null)
             {
-                comparison = ( availRes.amount / Needed[i].Amount);
+                comparison = ( availRes.Amount / Needed[i].Amount);
             }
             
-            availabilities.Add(new KeyValuePair(Needed[i].Copy(0), comparison));
+            availabilities.Add(Needed[i].Copy(0), comparison);
         }
         
         return availabilities;
@@ -163,7 +116,7 @@ public class Resource
         
         Dictionary<Resource, float> avail = NormalizedAvailableAmounts(needed, available);
         
-        foreach (KeyValuePair k in avail)
+        foreach (KeyValuePair<Resource, float> k in avail)
         {
             if (k.Value < smallest)
             {

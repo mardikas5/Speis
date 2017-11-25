@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class Storage : StructureBehaviour, ITransactionable
 {
-    public List<Resource> Stored {get; set;}
-    
-    public float Volume = 300;
+    [SerializeField]
+    private List<Resource> stored;
+    public List<Resource> Stored {get {return stored;} set {stored = value;}}
 
+    public float Volume = 300;
 
     public Storage()
     {
-        
+        base._name = "Storage";
     }
 
     public Storage(float volume)
@@ -20,9 +22,15 @@ public class Storage : StructureBehaviour, ITransactionable
     }
     
     
-    public override void Initialize()
+    public override void Init<Storage>(Structure structure)
     {
-        base.Initialize();
+        if (Initialized)
+        {
+            return;
+        }
+
+        base.Init<Storage>(structure);
+
         Stored = new List<Resource>();
     }
     

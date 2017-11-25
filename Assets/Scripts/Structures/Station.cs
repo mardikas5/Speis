@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+[System.Serializable]
 public class Station : Structure
 {
     public List<Structure> Parts;
@@ -26,7 +27,7 @@ public class Station : Structure
                 
                 if (Parts[i].StructureBehaviours[k].GetType() == typeof(T))
                 {
-                    returnVales.Add(Parts[i].StructureBehaviours[k]);
+                    returnValues.Add((T)Parts[i].StructureBehaviours[k]);
                 }
             }
         }

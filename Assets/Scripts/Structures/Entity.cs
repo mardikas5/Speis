@@ -1,7 +1,8 @@
 using System;
+using UnityEngine;
 
 [System.Serializable]
-public class Entity
+public class Entity : MonoBehaviour
 {
     public Position pos = new Position(0,0);
     

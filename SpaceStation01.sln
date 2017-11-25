@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceStation01", "SpaceStation01.csproj", "{EF4275BA-526D-19B1-D087-2C680B4EE894}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceStation01.Editor", "SpaceStation01.Editor.csproj", "{B0B5B34E-E73C-AED6-AFC9-90EACBE1D2E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{EF4275BA-526D-19B1-D087-2C680B4EE894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF4275BA-526D-19B1-D087-2C680B4EE894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF4275BA-526D-19B1-D087-2C680B4EE894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B5B34E-E73C-AED6-AFC9-90EACBE1D2E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B5B34E-E73C-AED6-AFC9-90EACBE1D2E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B5B34E-E73C-AED6-AFC9-90EACBE1D2E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B5B34E-E73C-AED6-AFC9-90EACBE1D2E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

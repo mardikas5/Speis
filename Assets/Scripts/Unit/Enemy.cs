@@ -7,12 +7,11 @@ public class Enemy : Entity
     public Enemy()
     {
         rand = new Random();
-        base.Symbol = 'F';
     }
     
     public Enemy(char symbol) : this()
     {
-        base.Symbol = symbol;
+
     }
     
     public override void Tick()

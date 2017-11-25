@@ -1,45 +1,46 @@
 using System;
 using System.Collections.Generic;
-
+using UnityEngine;
 
 [System.Serializable]
-public class Structure : Entity
+public class Structure : Entity 
 {
     public bool Initialized = false;
     
     
     public Station Owner;
     
+
     public List<Resource> BuildingCost;
     
-    
-    //serialize.
-    protected List<StructureBehaviour> StructureBehaviours;
-    
+    [SerializeField]
+    public List<StructureBehaviour> StructureBehaviours;    
     
     
     public event Action OnDestroyed;
     
+
     public Structure() 
     {
+        MyDebug.DebugWrite("Started");
         Initialize();   
     }
     
-    public bool AddBehaviour(StructureBehaviours behaviour)
+    public T AddBehaviour<T>() where T : StructureBehaviour
     {
-        if (behaviour != null)
-        {
-            return StructureBehaviours.Add(behaviour);
-        }
-        return false;
+        StructureBehaviour behaviour = this.gameObject.AddComponent<T>();
+        StructureBehaviours.Add(behaviour);
+        behaviour.Init<T>(this);
+        return behaviour as T;
     }
     
-    public bool RemoveBehaviour(StructureBehaviours behaviour)
+    public bool RemoveBehaviour(StructureBehaviour behaviour)
     {
         if (behaviour != null)
         {
            return StructureBehaviours.Remove(behaviour);
         }
+
         return false;
     }
     
@@ -60,10 +61,21 @@ public class Structure : Entity
         {
             return;
         }
+        if (StructureBehaviours == null)
+        {
+            StructureBehaviours = new List<StructureBehaviour>();
+        }
         if (Simulation.Instance != null)
         {
             Simulation.Instance.Register(this);
         }
         Initialized = true;
+    }
+
+
+    public static T CreateStructureObject<T>() where T : Structure
+    {
+        GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        return gameObject.AddComponent<T>();       
     }
 }
