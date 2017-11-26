@@ -38,8 +38,17 @@ public class Station : Structure
 
     public override void Initialize()
     {
+        if (Initialized)
+        {
+            return;
+        }
+        
+        base.Initialize();
+
         Owner = this;
         Parts = new List<Structure>();
+
+        Initialized = true;
     }
     
     public void TryDeposit(List<Resource> resources)

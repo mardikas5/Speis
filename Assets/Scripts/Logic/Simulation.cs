@@ -10,7 +10,8 @@ public class Simulation : Singleton<Simulation>
     {
         Entities = new List<Entity>();
     }
-    
+   
+
     //public event Action Tick;
     
     public void Register(Entity t) //More generic object

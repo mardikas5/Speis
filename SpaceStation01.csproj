@@ -220,18 +220,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameLogic.cs" />
-    <Compile Include="Assets\Scripts\ConsoleExtentions.cs" />
+    <Compile Include="Assets\Scripts\Console\ConsoleExtentions.cs" />
+    <Compile Include="Assets\Scripts\Console\Visuals.cs" />
+    <Compile Include="Assets\Scripts\Console\World.cs" />
     <Compile Include="Assets\Scripts\Databases\EntityDatabase.cs" />
     <Compile Include="Assets\Scripts\Databases\ResourceDatabase.cs" />
     <Compile Include="Assets\Scripts\Databases\StructureDatabase.cs" />
+    <Compile Include="Assets\Scripts\Debug\ExtDebug.cs" />
     <Compile Include="Assets\Scripts\Debug\MyDebug.cs" />
+    <Compile Include="Assets\Scripts\Logic\Const.cs" />
+    <Compile Include="Assets\Scripts\Logic\Placement.cs" />
     <Compile Include="Assets\Scripts\Logic\Simulation.cs" />
     <Compile Include="Assets\Scripts\obj\Debug\netcoreapp2.0\consoleApp.AssemblyInfo.cs" />
     <Compile Include="Assets\Scripts\Player\Input.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
-    <Compile Include="Assets\Scripts\Resource.cs" />
-    <Compile Include="Assets\Scripts\ResourceBase.cs" />
+    <Compile Include="Assets\Scripts\Resource\Resource.cs" />
+    <Compile Include="Assets\Scripts\Resource\ResourceBase.cs" />
     <Compile Include="Assets\Scripts\Structures\Connector.cs" />
+    <Compile Include="Assets\Scripts\Structures\ConnectorEnd.cs" />
     <Compile Include="Assets\Scripts\Structures\Entity.cs" />
     <Compile Include="Assets\Scripts\Structures\OreProcessing.cs" />
     <Compile Include="Assets\Scripts\Structures\ResourceProducer.cs" />
@@ -248,8 +254,6 @@
     <Compile Include="Assets\Scripts\Utility\Loader.cs" />
     <Compile Include="Assets\Scripts\Utility\Position.cs" />
     <Compile Include="Assets\Scripts\Utility\Singleton.cs" />
-    <Compile Include="Assets\Scripts\Visuals.cs" />
-    <Compile Include="Assets\Scripts\World.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\obj\Debug\netcoreapp2.0\consoleApp.csproj.FileListAbsolute.txt" />

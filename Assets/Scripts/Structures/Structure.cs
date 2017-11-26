@@ -5,26 +5,16 @@ using UnityEngine;
 [System.Serializable]
 public class Structure : Entity 
 {
-    public bool Initialized = false;
-    
-    
     public Station Owner;
     
-
+    public List<Connector> Connectors;
+    public Collider PlacementCollider;
     public List<Resource> BuildingCost;
     
     [SerializeField]
     public List<StructureBehaviour> StructureBehaviours;    
     
-    
     public event Action OnDestroyed;
-    
-
-    public Structure() 
-    {
-        MyDebug.DebugWrite("Started");
-        Initialize();   
-    }
     
     public T AddBehaviour<T>() where T : StructureBehaviour
     {
@@ -55,7 +45,7 @@ public class Structure : Entity
         }
     }
     
-    public virtual void Initialize()
+    public override void Initialize()
     {
         if (Initialized)
         {
@@ -69,11 +59,14 @@ public class Structure : Entity
         {
             Simulation.Instance.Register(this);
         }
+        Debug.Log("yy");
+        Connectors = new List<Connector>(transform.GetComponentsInChildren<Connector>());
+
         Initialized = true;
     }
 
 
-    public static T CreateStructureObject<T>() where T : Structure
+    public static T Create<T>() where T : Structure
     {
         GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
         return gameObject.AddComponent<T>();       

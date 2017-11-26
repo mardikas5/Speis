@@ -57,7 +57,7 @@ public class Resource
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public bool Equals(System.Object obj)
+    public override bool Equals(System.Object obj)
     {
         Resource res = obj as Resource; 
         if (res == null)
