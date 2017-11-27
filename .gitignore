@@ -1,3 +1,7 @@
 .vs/SpaceStation01/v15/Server/
 Library/metadata/
 Library/ShaderCache/
+.vs/
+Speis.CSharp.Editor.csproj
+Speis.CSharp.csproj
+Speis.sln

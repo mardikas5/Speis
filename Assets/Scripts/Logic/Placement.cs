@@ -41,7 +41,10 @@ public class Placement : MonoBehaviour
         }
         
         Connector connect = TryConnect( 5f, Placing  );
-
+        if (Placing == null)
+        {
+            SetPlacing(testObject);
+        }
         if( connect != null )
         {
 
@@ -65,7 +68,7 @@ public class Placement : MonoBehaviour
 
         for( int i = 0; i < hitColliders.Length; i++ )
         {
-            if( ( t.point - hitColliders[i].transform.position ).sqrMagnitude < ( t.point - ClosestCollider.transform.position ).sqrMagnitude )
+            if( ( pos - hitColliders[i].transform.position ).sqrMagnitude < ( pos - ClosestCollider.transform.position ).sqrMagnitude )
             {
                 ClosestCollider = hitColliders[i];
             }
@@ -121,23 +124,32 @@ public class Placement : MonoBehaviour
             Collider checkPlacement = PartEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
             Collider checkOtherPlacement = StationEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
             
-            Quaternion Rotation = Quaternion.Inverse( StationEnd.transform.rotation ) * PartEnd.rotation;
+            Quaternion Rotation = StationEnd.transform.rotation * Quaternion.Inverse(PartEnd.transform.rotation);
 
             Placing.transform.rotation *= Rotation;
+            Placing.transform.eulerAngles += new Vector3(180,0,0);
             Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
 
-            Collider[] inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Placing.transform.rotation, ~1 << 1, QueryTriggerInteraction.Ignore );
-            ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Placing.transform.rotation, Vector3.zero, 0f, Color.red );
+            
 
-            for( int i = 0; i < inCol.Length; i++ )
+            List<Collider> inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, ~1 << 1, QueryTriggerInteraction.Ignore ).ToList();
+            ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, Vector3.zero, 0f, Color.red );
+    
+            for( int i = 0; i < inCol.Count; i++ )
             {
-                //if collider is inside some object, cant place.
-                //if (inCol[i])
+                if (inCol[0].transform.root == Placing.transform)
+                {   
+                    inCol.RemoveAt(0);
+                    continue;
+                }
+
+                Debug.Log(inCol[0].transform.root + ", " + inCol[0].transform.name);
             }
 
-            if( inCol.Length > 0 )
+            if( inCol.Count > 0 )
             {
                 break;
+                
                 Candidates.Remove( PartEnd );
             }
             else
