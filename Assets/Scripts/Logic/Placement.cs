@@ -6,45 +6,45 @@ using UnityEngine;
 public class Placement : MonoBehaviour
 {
     public GameObject testObject;
+    
     public GameObject Placing;
+    
     public bool placementActive;
+    
     public Camera placementCam;
-
-    public bool stop = false;
-    public float stopcounter = 200;
-    public float stopin = 200;
+    
+    public int PlacementTimer = 5;
+    public int PlacementCounter = 0;
+    
     void Start()
     {
 
     }
 
+    public void SetPlacing(GameObject placing)
+    {
+        Placing = Instantiate(placing);
+        Placing.gameObject.layer = 1 << 1;
+        Placing.gameObject.GetComponentsInChildren<Collider>().ToList().ForEach( x => x.gameObject.layer = 1 << 1 );
+    }
+
     void Update()
     {
-        if( stop )
+        if (PlacementCounter < 0)
         {
-            stopin -= 1;
-            if( stopin < 0 )
-            {
-                stop = false;
-                stopin = stopcounter;
-            }
+            PlacementCounter = PlacementTimer;
+        }
+        else
+        {
+            PlacementCounter -= 1;
             return;
         }
-        if( Placing == null )
-        {
-            Placing = Instantiate( testObject );
-            Placing.gameObject.layer = 1 << 1;
-            Placing.gameObject.GetComponentsInChildren<Collider>().ToList().ForEach( x => x.gameObject.layer = 1 << 1 );
-        }
-
-        Vector3 pos = Vector3.zero;
-        Vector3 rot = Vector3.zero;
-        Connector connect = TryConnect( 5f, out pos, out rot );
+        
+        Connector connect = TryConnect( 5f, Placing  );
 
         if( connect != null )
         {
-            //Placing.transform.forward = rot;
-            //Placing.transform.position = pos;
+
         }
         else
         {
@@ -53,15 +53,36 @@ public class Placement : MonoBehaviour
         }
     }
 
-    //Tidy all of this shit up real good pls 
-    public Connector TryConnect( float distance, out Vector3 pos, out Vector3 rot )
+    public Collider GetClosestCollider( Vector3 pos, float radius, int layerMask )
     {
-        pos = Vector3.zero;
-        rot = Vector3.zero;
+        Collider[] hitColliders = Physics.OverlapSphere( pos, radius, layerMask );
+        Collider ClosestCollider = null;
+
+        if( hitColliders.Length > 0 )
+        {
+            ClosestCollider = hitColliders[0];
+        }
+
+        for( int i = 0; i < hitColliders.Length; i++ )
+        {
+            if( ( t.point - hitColliders[i].transform.position ).sqrMagnitude < ( t.point - ClosestCollider.transform.position ).sqrMagnitude )
+            {
+                ClosestCollider = hitColliders[i];
+            }
+        }
+        
+        return ClosestCollider;
+    }
+
+
+    //Tidy all of this shit up real good pls 
+    public Connector TryConnect( float distance, GameObject Placing )
+    {
         if( placementCam == null )
         {
             return null;
         }
+        
         Ray r = placementCam.ScreenPointToRay( Input.mousePosition );
         RaycastHit t;
 
@@ -70,77 +91,61 @@ public class Placement : MonoBehaviour
             return null;
         }
 
-        Collider[] hitColliders = Physics.OverlapSphere( t.point, distance, Const.ConnectionLayerMask );
-        Collider ClosestConnector = null;
+        //get the collider or connector the player is trying to connect to.
+        Collider ClosestConnector = GetClosestCollider( t.point, distance, Const.ConnectionLayerMask );
 
+        List<ConnectorEnd> Candidates = Placing.gameObject.GetComponentsInChildren<ConnectorEnd>().ToList();
 
+        ConnectorEnd StationEnd = ClosestConnector.GetComponent<ConnectorEnd>();
+        ConnectorEnd PartEnd = null;
 
-        if( hitColliders.Length > 0 )
+        //get the closest connector that is able to connect.
+        while( Candidates.Count > 0 )
         {
-            ClosestConnector = hitColliders[0];
-        }
-
-        for( int i = 0; i < hitColliders.Length; i++ )
-        {
-            if( ( t.point - hitColliders[i].transform.position ).sqrMagnitude < ( t.point - ClosestConnector.transform.position ).sqrMagnitude )
+            if( Candidates.Count > 0 )
             {
-                ClosestConnector = hitColliders[i];
-            }
-        }
-
-        List<ConnectorEnd> ends = Placing.gameObject.GetComponentsInChildren<ConnectorEnd>().ToList();
-        //placed connector (already on station)
-        ConnectorEnd ConnectWith = ClosestConnector.GetComponent<ConnectorEnd>();
-        ConnectorEnd ConnectEnd = null;
-
-        while( ends.Count > 0 )
-        {
-
-            if( ends.Count > 0 )
-            {
-                ConnectEnd = ends[0];
+                PartEnd = Candidates[0];
             }
 
-            for( int i = 0; i < ends.Count; i++ )
+            for( int i = 0; i < Candidates.Count; i++ )
             {
-                if( ( ConnectWith.transform.position - ends[i].transform.position ).sqrMagnitude < ( ConnectWith.transform.position - ConnectEnd.transform.position ).sqrMagnitude )
+                if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
                 {
-                    ConnectEnd = ends[i];
+                    PartEnd = Candidates[i];
                 }
             }
-            Placing.transform.eulerAngles = new Vector3( 0, 0, 0 );
+            
+            Placing.transform.eulerAngles = new Vector3( 0, 0, 0 ); //set to whatever rotation the player has currently set 
+            
+            //check only the part collider.
+            Collider checkPlacement = PartEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
+            Collider checkOtherPlacement = StationEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
+            
+            Quaternion Rotation = Quaternion.Inverse( StationEnd.transform.rotation ) * PartEnd.rotation;
 
-            Collider checkPlacement = ConnectEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
-            Collider checkOtherPlacement = ConnectWith.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
-            Vector3 diff = -( ConnectEnd.transform.forward + ( ConnectWith.transform.forward - ConnectEnd.transform.forward ) );
-
-            Debug.Log( diff + ", " + ConnectEnd.transform.forward + ", " + ConnectWith.transform.forward + ", " + ( ConnectWith.transform.forward - ConnectEnd.transform.forward ) );
-            Placing.transform.forward = -ConnectWith.transform.forward;
-            Placing.transform.forward +=  ConnectEnd.transform.forward;
-            Placing.transform.position += ( ConnectWith.transform.position - ConnectEnd.transform.position );
+            Placing.transform.rotation *= Rotation;
+            Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
 
             Collider[] inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Placing.transform.rotation, ~1 << 1, QueryTriggerInteraction.Ignore );
             ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Placing.transform.rotation, Vector3.zero, 0f, Color.red );
-            //GetComponent<LineRenderer>().SetPositions( new Vector3[] { ConnectWith.transform.position, ConnectEnd.transform.position } );
-            //Placing.transform.rotation = Placing.transform.rotation;
+
             for( int i = 0; i < inCol.Length; i++ )
             {
+                //if collider is inside some object, cant place.
                 //if (inCol[i])
             }
 
             if( inCol.Length > 0 )
             {
                 break;
-                ends.Remove( ConnectEnd );
+                Candidates.Remove( PartEnd );
             }
             else
             {
                 break;
             }
         }
-        stop = true;
+        
         return ClosestConnector.GetComponent<ConnectorEnd>().connector;
     }
-
-
 }
