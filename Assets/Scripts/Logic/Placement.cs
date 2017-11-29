@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -124,8 +124,19 @@ public class Placement : MonoBehaviour
             Collider checkPlacement = PartEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
             Collider checkOtherPlacement = StationEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
             
-            Quaternion Rotation = StationEnd.transform.rotation * Quaternion.Inverse(PartEnd.transform.rotation);
-
+            Quaternion startRot = PartEnd.transform.rotation;
+            Quaternion endRot = StationEnd.transform.rotation;
+            
+            
+            Quaternion DirOther = startRot * Quaternion.Inverse(endRot);
+            Quaternion Direction = Quaternion.LookRotation(PartEnd.transform.forward - StationEnd.transform.forward);
+            
+            Debug.Log( DirOther + ", " + Direction + ", stationport: " + endRot + ", partrot:" + startRot );
+            Debug.Log( "station: " + StationEnd.transform.eulerAngles + "part: " + PartEnd.transform.eulerAngles );
+            Debug.Log( Quaternion.LookRotation(-StationEnd.transform.forward) );
+            
+            
+            
             Placing.transform.rotation *= Rotation;
             Placing.transform.eulerAngles += new Vector3(180,0,0);
             Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
