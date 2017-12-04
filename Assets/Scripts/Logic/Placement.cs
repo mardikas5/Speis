@@ -6,36 +6,37 @@ using UnityEngine;
 public class Placement : MonoBehaviour
 {
     public GameObject testObject;
-    
+
     public GameObject Placing;
-    
+
     public bool placementActive;
-    
+
     public Camera placementCam;
-    
+
     public Coroutine placement;
-    
+
     void Start()
     {
 
     }
 
-    public void SetPlacing(GameObject placing)
+    public void SetPlacing( GameObject placing )
     {
-        Placing = Instantiate(placing);
+        Placing = Instantiate( placing );
         Placing.gameObject.layer = 1 << 1;
         Placing.gameObject.GetComponentsInChildren<Collider>().ToList().ForEach( x => x.gameObject.layer = 1 << 1 );
     }
 
     void Update()
     {
-        if (Placing == null)
+        if( Placing == null )
         {
-            SetPlacing(testObject);
+            SetPlacing( testObject );
         }
-        if (placement == null)
+
+        if( placement == null )
         {
-            placement = StartCoroutine( TryConnectRoutine(5f, Placing) );
+            placement = StartCoroutine( TryConnectRoutine( 5f, Placing ) );
         }
     }
 
@@ -57,18 +58,18 @@ public class Placement : MonoBehaviour
                 ClosestCollider = hitColliders[i];
             }
         }
-        
+
         return ClosestCollider;
     }
-    
-    
+
+
     public ConnectorEnd GetConnectorAtScreenPoint( Vector2 Pos, float distance )
     {
         if( placementCam == null )
         {
             return null;
         }
-        
+
         Ray r = placementCam.ScreenPointToRay( Pos );
         RaycastHit t;
 
@@ -76,40 +77,43 @@ public class Placement : MonoBehaviour
         {
             return null;
         }
-        
+
         Collider ClosestConnector = GetClosestCollider( t.point, distance, Const.ConnectionLayerMask );
         //get the collider or connector the player is trying to connect to.
-        
-        if ( ClosestConnector == null )
+
+        if( ClosestConnector == null )
         {
             return null;
         }
-        
+
         return ClosestConnector.GetComponent<ConnectorEnd>();
     }
-    
-    
+
+
     //can add callback to some value
     public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
     {
-        ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.MousePosition, distance );
-        
+        ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
+
         ConnectorEnd PartEnd = null;
-        
-        if ( StationEnd == null )
+
+        if( StationEnd == null )
         {
-            yield return;
+            Debug.Log( "isnull" );
+            yield break;
         }
-        
-        List<ConnectorEnd> Candidates = Placing.transform.root.GetComponentsInChildren<ConnectorEnd>();
-        
+
+        List<ConnectorEnd> Candidates = Placing.transform.root.GetComponentsInChildren<ConnectorEnd>().ToList();
+
         PartEnd = Candidates[0];
-        
+
         //get the closest connector that is able to connect.
         while( Candidates.Count > 0 )
         {
-            if ( Input.GetMouseButtonDown(0) )
+            if( Input.GetKeyDown( KeyCode.K ) )
             {
+                Debug.Log( "MouseInput" );
+                PartEnd = Candidates[0];
                 for( int i = 0; i < Candidates.Count; i++ )
                 {
                     if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
@@ -117,55 +121,58 @@ public class Placement : MonoBehaviour
                         PartEnd = Candidates[i];
                     }
                 }
-                
-                if ( TryPlaceTogether( StationEnd, PartEnd, Placing ) )
+
+                if( TryPlaceTogether( StationEnd, PartEnd, Placing ) )
                 {
+                    Candidates.Remove( PartEnd );
                     Debug.Log( "Fits" );
                 }
                 else
                 {
                     Candidates.Remove( PartEnd );
                 }
+                PartEnd = null;
             }
-            
-            yield return new WaitForEndOfFrame();
+
+            yield return null;
         }
-        
-        if ( Candidates.Count == 0 )
+
+        if( Candidates.Count == 0 )
         {
             Debug.Log( "Couldn't find suitable candidate" );
         }
     }
-    
-    
-    public bool TryPlaceTogether(ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
+
+
+    public bool TryPlaceTogether( ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
     {
         //check only the part collider.
         Collider checkPlacement = PartEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
-        
-        Placing.transform.forward -= StationEnd.transform.forward;
-        Placing.transform.eulerAngles -= PartEnd.transform.eulerAngles;
+
+        Placing.transform.forward = -StationEnd.transform.forward;
+        Placing.transform.eulerAngles += ( Placing.transform.eulerAngles - PartEnd.transform.eulerAngles );
+  
         Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
 
         List<Collider> inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, ~1 << 1, QueryTriggerInteraction.Ignore ).ToList();
         ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, Vector3.zero, 0f, Color.red );
-    
+
         for( int i = 0; i < inCol.Count; )
         {
-            if (inCol[i].transform.root == Placing.transform)
-            {   
-                inCol.RemoveAt(i);
+            if( inCol[i].transform.root == Placing.transform )
+            {
+                inCol.RemoveAt( i );
                 continue;
             }
-            
+
             i++;
         }
-        
-        if (inCol.Count > 0)
+
+        if( inCol.Count > 0 )
         {
             return false;
         }
-        
+
         return true;
     }
 }
