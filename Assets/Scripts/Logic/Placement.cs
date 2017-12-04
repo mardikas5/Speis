@@ -13,9 +13,6 @@ public class Placement : MonoBehaviour
     
     public Camera placementCam;
     
-    public int PlacementTimer = 5;
-    public int PlacementCounter = 0;
-    
     public Coroutine placement;
     
     void Start()
@@ -32,29 +29,16 @@ public class Placement : MonoBehaviour
 
     void Update()
     {
-        if (PlacementCounter < 0)
-        {
-            PlacementCounter = PlacementTimer;
-        }
-        else
-        {
-            PlacementCounter -= 1;
-            return;
-        }
         if (Placing == null)
         {
             SetPlacing(testObject);
         }
         if (placement == null)
         {
-            placement = StartCoroutine(TryConnectRoutine(5f, Placing));
+            placement = StartCoroutine( TryConnectRoutine(5f, Placing) );
         }
-        // else
-        // {
-        //     Ray r = placementCam.ScreenPointToRay( Input.mousePosition );
-        //     Placing.transform.position = placementCam.transform.position + ( r.direction.normalized * 15f );
-        // }
     }
+
 
     public Collider GetClosestCollider( Vector3 pos, float radius, int layerMask )
     {
@@ -77,43 +61,64 @@ public class Placement : MonoBehaviour
         return ClosestCollider;
     }
     
-    public IEnumerator TryConnectRoutine(float distance, GameObject Placing, Action NextPlacement, Action ConnectorOut)
+    
+    public ConnectorEnd GetConnectorAtScreenPoint( Vector2 Pos, float distance )
     {
-        //add start rotation
         if( placementCam == null )
         {
-            yield return break;
+            return null;
         }
         
-        Ray r = placementCam.ScreenPointToRay( Input.mousePosition );
+        Ray r = placementCam.ScreenPointToRay( Pos );
         RaycastHit t;
 
         if( !Physics.Raycast( r, out t ) )
         {
-            yield return break;
+            return null;
         }
-
-        //get the collider or connector the player is trying to connect to.
+        
         Collider ClosestConnector = GetClosestCollider( t.point, distance, Const.ConnectionLayerMask );
-
-        List<ConnectorEnd> Candidates = Placing.gameObject.GetComponentsInChildren<ConnectorEnd>().ToList();
-
-        ConnectorEnd StationEnd = ClosestConnector.GetComponent<ConnectorEnd>();
+        //get the collider or connector the player is trying to connect to.
+        
+        if ( ClosestConnector == null )
+        {
+            return null;
+        }
+        
+        return ClosestConnector.GetComponent<ConnectorEnd>();
+    }
+    
+    
+    //can add callback to some value
+    public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
+    {
+        ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.MousePosition, distance );
+        
         ConnectorEnd PartEnd = null;
-
+        
+        if ( StationEnd == null )
+        {
+            yield return;
+        }
+        
+        List<ConnectorEnd> Candidates = Placing.transform.root.GetComponentsInChildren<ConnectorEnd>();
+        
+        PartEnd = Candidates[0];
+        
         //get the closest connector that is able to connect.
         while( Candidates.Count > 0 )
         {
-            for( int i = 0; i < Candidates.Count; i++ )
+            if ( Input.GetMouseButtonDown(0) )
             {
-                if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
+                for( int i = 0; i < Candidates.Count; i++ )
                 {
-                    PartEnd = Candidates[i];
+                    if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
+                    {
+                        PartEnd = Candidates[i];
+                    }
                 }
-            }   
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (TryPlaceTogether( StationEnd, PartEnd, Placing ))
+                
+                if ( TryPlaceTogether( StationEnd, PartEnd, Placing ) )
                 {
                     Debug.Log( "Fits" );
                 }
@@ -122,15 +127,16 @@ public class Placement : MonoBehaviour
                     Candidates.Remove( PartEnd );
                 }
             }
-            yield return null;
+            
+            yield return new WaitForEndOfFrame();
         }
-        if (Candidates.Count == 0)
+        
+        if ( Candidates.Count == 0 )
         {
             Debug.Log( "Couldn't find suitable candidate" );
         }
-        
-        return StationEnd.connector;
     }
+    
     
     public bool TryPlaceTogether(ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
     {
@@ -154,11 +160,12 @@ public class Placement : MonoBehaviour
             
             i++;
         }
+        
         if (inCol.Count > 0)
         {
             return false;
         }
-            return true;
-        }
+        
+        return true;
     }
 }
