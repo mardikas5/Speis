@@ -16,6 +16,8 @@ public class Placement : MonoBehaviour
     public int PlacementTimer = 5;
     public int PlacementCounter = 0;
     
+    public Coroutine placement;
+    
     void Start()
     {
 
@@ -39,21 +41,19 @@ public class Placement : MonoBehaviour
             PlacementCounter -= 1;
             return;
         }
-        
-        Connector connect = TryConnect( 5f, Placing  );
         if (Placing == null)
         {
             SetPlacing(testObject);
         }
-        if( connect != null )
+        if (placement == null)
         {
-
+            placement = StartCoroutine(TryConnectRoutine(5f, Placing));
         }
-        else
-        {
-            Ray r = placementCam.ScreenPointToRay( Input.mousePosition );
-            Placing.transform.position = placementCam.transform.position + ( r.direction.normalized * 15f );
-        }
+        // else
+        // {
+        //     Ray r = placementCam.ScreenPointToRay( Input.mousePosition );
+        //     Placing.transform.position = placementCam.transform.position + ( r.direction.normalized * 15f );
+        // }
     }
 
     public Collider GetClosestCollider( Vector3 pos, float radius, int layerMask )
@@ -76,14 +76,13 @@ public class Placement : MonoBehaviour
         
         return ClosestCollider;
     }
-
-
-    //Tidy all of this shit up real good pls 
-    public Connector TryConnect( float distance, GameObject Placing )
+    
+    public IEnumerator TryConnectRoutine(float distance, GameObject Placing, Action NextPlacement, Action ConnectorOut)
     {
+        //add start rotation
         if( placementCam == null )
         {
-            return null;
+            yield return break;
         }
         
         Ray r = placementCam.ScreenPointToRay( Input.mousePosition );
@@ -91,7 +90,7 @@ public class Placement : MonoBehaviour
 
         if( !Physics.Raycast( r, out t ) )
         {
-            return null;
+            yield return break;
         }
 
         //get the collider or connector the player is trying to connect to.
@@ -105,70 +104,61 @@ public class Placement : MonoBehaviour
         //get the closest connector that is able to connect.
         while( Candidates.Count > 0 )
         {
-            if( Candidates.Count > 0 )
-            {
-                PartEnd = Candidates[0];
-            }
-
             for( int i = 0; i < Candidates.Count; i++ )
             {
                 if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
                 {
                     PartEnd = Candidates[i];
                 }
-            }
-            
-            Placing.transform.eulerAngles = new Vector3( 0, 0, 0 ); //set to whatever rotation the player has currently set 
-            
-            //check only the part collider.
-            Collider checkPlacement = PartEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
-            Collider checkOtherPlacement = StationEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
-            
-            Quaternion startRot = PartEnd.transform.rotation;
-            Quaternion endRot = StationEnd.transform.rotation;
-            
-            
-            Quaternion DirOther = startRot * Quaternion.Inverse(endRot);
-            Quaternion Direction = Quaternion.LookRotation(PartEnd.transform.forward - StationEnd.transform.forward);
-            
-            Debug.Log( DirOther + ", " + Direction + ", stationport: " + endRot + ", partrot:" + startRot );
-            Debug.Log( "station: " + StationEnd.transform.eulerAngles + "part: " + PartEnd.transform.eulerAngles );
-            Debug.Log( Quaternion.LookRotation(-StationEnd.transform.forward) );
-            
-            
-            
-            Placing.transform.rotation *= Rotation;
-            Placing.transform.eulerAngles += new Vector3(180,0,0);
-            Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
-
-            
-
-            List<Collider> inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, ~1 << 1, QueryTriggerInteraction.Ignore ).ToList();
-            ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, Vector3.zero, 0f, Color.red );
-    
-            for( int i = 0; i < inCol.Count; i++ )
+            }   
+            if (Input.GetMouseButtonDown(0))
             {
-                if (inCol[0].transform.root == Placing.transform)
-                {   
-                    inCol.RemoveAt(0);
-                    continue;
+                if (TryPlaceTogether( StationEnd, PartEnd, Placing ))
+                {
+                    Debug.Log( "Fits" );
                 }
-
-                Debug.Log(inCol[0].transform.root + ", " + inCol[0].transform.name);
+                else
+                {
+                    Candidates.Remove( PartEnd );
+                }
             }
-
-            if( inCol.Count > 0 )
-            {
-                break;
-                
-                Candidates.Remove( PartEnd );
-            }
-            else
-            {
-                break;
-            }
+            yield return null;
+        }
+        if (Candidates.Count == 0)
+        {
+            Debug.Log( "Couldn't find suitable candidate" );
         }
         
-        return ClosestConnector.GetComponent<ConnectorEnd>().connector;
+        return StationEnd.connector;
+    }
+    
+    public bool TryPlaceTogether(ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
+    {
+        //check only the part collider.
+        Collider checkPlacement = PartEnd.transform.root.GetComponentInChildren<Structure>().PlacementCollider;
+        
+        Placing.transform.forward -= StationEnd.transform.forward;
+        Placing.transform.eulerAngles -= PartEnd.transform.eulerAngles;
+        Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
+
+        List<Collider> inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, ~1 << 1, QueryTriggerInteraction.Ignore ).ToList();
+        ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, Vector3.zero, 0f, Color.red );
+    
+        for( int i = 0; i < inCol.Count; )
+        {
+            if (inCol[i].transform.root == Placing.transform)
+            {   
+                inCol.RemoveAt(i);
+                continue;
+            }
+            
+            i++;
+        }
+        if (inCol.Count > 0)
+        {
+            return false;
+        }
+            return true;
+        }
     }
 }
