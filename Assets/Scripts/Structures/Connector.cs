@@ -16,4 +16,13 @@ public class Connector : MonoBehaviour
         ConnectorEnd t = ConnectionPoint.gameObject.AddComponent<ConnectorEnd>();
         t.connector = this;
     }
+    
+    public void Connect( Connector other )
+    {
+        if ( other.Connected == null && Connected == null)
+        {
+            this.Connected = other;
+            other.Connected = this;
+        }
+    }
 }

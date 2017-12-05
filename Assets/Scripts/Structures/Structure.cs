@@ -59,7 +59,7 @@ public class Structure : Entity
         {
             Simulation.Instance.Register(this);
         }
-        Debug.Log("yy");
+
         Connectors = new List<Connector>(transform.GetComponentsInChildren<Connector>());
 
         Initialized = true;

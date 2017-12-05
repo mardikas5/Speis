@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Placement : MonoBehaviour
+public class Placement<Singleton> : MonoBehaviour
 {
     public GameObject testObject;
-
     public GameObject Placing;
-
+    
     public bool placementActive;
 
     public Camera placementCam;
 
     public Coroutine placement;
 
+    public event Action<GameObject> BuildingPlaced;
+
+
+
     void Start()
     {
-
+        //Some Init Stuff;
     }
 
     public void SetPlacing( GameObject placing )
@@ -29,12 +32,19 @@ public class Placement : MonoBehaviour
 
     void Update()
     {
-        if( Placing == null )
+        UpdatePlacement();
+    }
+    
+    public void UpdatePlacement()
+    {
+        if ( Input.GetKeyDown( KeyCode.H ) )
         {
-            SetPlacing( testObject );
+            if( Placing == null )
+            {
+                SetPlacing( testObject );
+            }
         }
-
-        if( placement == null )
+        if( placement == null && Placing != null )
         {
             placement = StartCoroutine( TryConnectRoutine( 5f, Placing ) );
         }
@@ -93,13 +103,14 @@ public class Placement : MonoBehaviour
     //can add callback to some value
     public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
     {
+        ConnectorEnd ConnectToStation = null;
+
         ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
 
         ConnectorEnd PartEnd = null;
 
         if( StationEnd == null )
         {
-            Debug.Log( "isnull" );
             yield break;
         }
 
@@ -112,8 +123,10 @@ public class Placement : MonoBehaviour
         {
             if( Input.GetKeyDown( KeyCode.K ) )
             {
-                Debug.Log( "MouseInput" );
+                Debug.Log( "Swapping Port" );
+                
                 PartEnd = Candidates[0];
+                
                 for( int i = 0; i < Candidates.Count; i++ )
                 {
                     if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
@@ -124,6 +137,7 @@ public class Placement : MonoBehaviour
 
                 if( TryPlaceTogether( StationEnd, PartEnd, Placing ) )
                 {
+                    CurrentPort = PartEnd;
                     Candidates.Remove( PartEnd );
                     Debug.Log( "Fits" );
                 }
@@ -131,7 +145,16 @@ public class Placement : MonoBehaviour
                 {
                     Candidates.Remove( PartEnd );
                 }
+
                 PartEnd = null;
+            }
+            
+            if (Input.GetKeyDown(KeyCode.J)
+            {
+                if ( FinalizeConnection( StationEnd.Connector, PartEnd.Connector, Placing ) != null)
+                {
+                    yield break;
+                }
             }
 
             yield return null;
@@ -143,6 +166,24 @@ public class Placement : MonoBehaviour
         }
     }
 
+    public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, GameObject Placing )
+    {
+        if ( Placing == null )
+        {
+            return null;
+        }
+        
+        StationEnd.Connect( PartEnd );
+        
+        GameObject FinalPlacement = Instantiate( Placing.gameObject, Placing.Transform.Position, Placing.Transform.Rotation, null );
+        
+        if ( BuildingPlaced != null )
+        {
+            BuildingPlaced( FinalPlacement );
+        }
+        
+        Destroy( Placing );
+    }
 
     public bool TryPlaceTogether( ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
     {
