@@ -45,11 +45,11 @@ public class Structure : Entity
         }
     }
     
-    public override void Initialize()
+    public override bool Initialize()
     {
-        if (Initialized)
+        if ( !base.Initialize() )
         {
-            return;
+            return false;
         }
         if (StructureBehaviours == null)
         {
@@ -62,7 +62,7 @@ public class Structure : Entity
 
         Connectors = new List<Connector>(transform.GetComponentsInChildren<Connector>());
 
-        Initialized = true;
+        return true;
     }
 
 

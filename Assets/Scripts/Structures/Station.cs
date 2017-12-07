@@ -36,19 +36,18 @@ public class Station : Structure
     }
 
 
-    public override void Initialize()
+    public override bool Initialize()
     {
-        if (Initialized)
-        {
-            return;
-        }
         
-        base.Initialize();
+       if ( !base.Initialize() )
+       {
+           return false;
+       }
 
         Owner = this;
         Parts = new List<Structure>();
 
-        Initialized = true;
+        return true;
     }
     
     public void TryDeposit(List<Resource> resources)

@@ -11,9 +11,16 @@ public class Entity : MonoBehaviour
     public string Name = "unNamedEntity";
     public string ID = "xD"; //make into GUID
     
-    public virtual void Initialize()
+    public virtual bool Initialize()
     {
+        if (Initialized == true)
+        {
+            Debug.Log( "Tried to initialize already inited entity" );
+            return false;
+        }
+        
         Initialized = true;
+        return true;
     }
 
     public virtual void Tick()

@@ -1,8 +1,29 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
-public class UnitCommand
+public virtual class UnitCommand
 {
-    //movement, on entity, context menu?
+    public static string _missingOwner = "Unit command has no owner";
+    
+    public Unit Owner;
+    
+    public string Description;
+    
+    public virtual void Run()
+    {
+        if ( Owner == null )
+        {
+            Debug.Log( _missingOwner );
+            return;
+        }
+        
+        Owner.StartCoroutine( CommandCoroutine );
+    }
+    
+    public virtual IEnumerator CommandCoroutine()
+    {
+        
+    }
 }
