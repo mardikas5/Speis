@@ -6,10 +6,10 @@ public class Entity : MonoBehaviour
 {
     public bool Initialized = false;
 
-    public Position pos = new Position(0,0);
+    public Vector3 pos = Vector3.zero;
     
     public string Name = "unNamedEntity";
-    public string ID = "xD"; //make into GUID
+    public string GUID = "";
     
     public virtual bool Initialize()
     {
@@ -19,10 +19,20 @@ public class Entity : MonoBehaviour
             return false;
         }
         
+        if (GUID == string.null || GUID == string.empty)
+        {
+            GUID = System.Guid.NewGuid().ToString();
+        }
+        
         Initialized = true;
         return true;
     }
-
+    
+    public virtual bool Load()
+    {
+        
+    }
+    
     public virtual void Tick()
     {
         
