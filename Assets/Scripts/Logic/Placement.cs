@@ -12,16 +12,16 @@ public class Placement<Singleton> : MonoBehaviour
 
     public Camera placementCam;
 
-    public Coroutine placement;
+    public Coroutine PlacementCoroutine;
 
     public event Action<GameObject> BuildingPlaced;
-
 
 
     void Start()
     {
         //Some Init Stuff;
     }
+
 
     public void SetPlacing( GameObject placing )
     {
@@ -30,10 +30,12 @@ public class Placement<Singleton> : MonoBehaviour
         Placing.gameObject.GetComponentsInChildren<Collider>().ToList().ForEach( x => x.gameObject.layer = 1 << 1 );
     }
 
+
     void Update()
     {
         UpdatePlacement();
     }
+    
     
     public void UpdatePlacement()
     {
@@ -44,9 +46,9 @@ public class Placement<Singleton> : MonoBehaviour
                 SetPlacing( testObject );
             }
         }
-        if( placement == null && Placing != null )
+        if( PlacementCoroutine == null && Placing != null )
         {
-            placement = StartCoroutine( TryConnectRoutine( 5f, Placing ) );
+            PlacementCoroutine = StartCoroutine( TryConnectRoutine( 5f, Placing ) );
         }
     }
 
@@ -101,18 +103,22 @@ public class Placement<Singleton> : MonoBehaviour
 
 
     //can add callback to some value
-    public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
+    public IEnumerator TryConnectRoutine( float distance, GameObject Placing, Action<bool> swapPort )
     {
+        bool doSwapPort             = Input.GetKeyDown( KeyCode.K );
+        bool doFinalizeConnection   = Input.GetKeyDown( KeyCode.J );
+        
+        
         ConnectorEnd ConnectToStation = null;
-
-        ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
-
         ConnectorEnd PartEnd = null;
+        ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
+        
 
         if( StationEnd == null )
         {
             yield break;
         }
+
 
         List<ConnectorEnd> Candidates = Placing.transform.root.GetComponentsInChildren<ConnectorEnd>().ToList();
 
@@ -121,7 +127,7 @@ public class Placement<Singleton> : MonoBehaviour
         //get the closest connector that is able to connect.
         while( Candidates.Count > 0 )
         {
-            if( Input.GetKeyDown( KeyCode.K ) )
+            if( doSwapPort )
             {
                 Debug.Log( "Swapping Port" );
                 
@@ -149,7 +155,7 @@ public class Placement<Singleton> : MonoBehaviour
                 PartEnd = null;
             }
             
-            if (Input.GetKeyDown(KeyCode.J)
+            if ( doFinalizeConnection )
             {
                 if ( FinalizeConnection( StationEnd.Connector, PartEnd.Connector, Placing ) != null)
                 {

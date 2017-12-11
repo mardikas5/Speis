@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-//make a gameobject prefab that has all the monos attached.
+[RequireComponent(typeof(Simulation), typeof(Placement))]
 public class GameSceneInitializer<Singleton> : MonoBehaviour
 {
+    public bool InitAttachedBehaviours = true;
+    
     public MonoBehaviour[] InitializeAtStart = new MonoBehaviour[]
     {
 
@@ -12,14 +14,11 @@ public class GameSceneInitializer<Singleton> : MonoBehaviour
     
     public void Start()
     {
-        foreach (MonoBehaviour mb in InitializeAtStart)
-        {
-            //
-        }
+        //foreach (Component m in GetComponents(typeof())
     }
     
     public void Init<T>() where T : MonoBehaviour
     {
-        gameObject.AddComponent<T>();
+       
     }
 }

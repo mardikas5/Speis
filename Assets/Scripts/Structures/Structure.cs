@@ -57,10 +57,10 @@ public class Structure : Entity
         }
         if (Simulation.Instance != null)
         {
-            Simulation.Instance.Register(this);
+            Simulation.Instance.Register( this );
         }
 
-        Connectors = new List<Connector>(transform.GetComponentsInChildren<Connector>());
+        Connectors = new List<Connector>( transform.GetComponentsInChildren<Connector>() );
 
         return true;
     }
@@ -68,7 +68,7 @@ public class Structure : Entity
 
     public static T Create<T>() where T : Structure
     {
-        GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GameObject gameObject = GameObject.CreatePrimitive( PrimitiveType.Cube );
         return gameObject.AddComponent<T>();       
     }
 }

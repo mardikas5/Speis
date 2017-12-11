@@ -113,21 +113,24 @@ public class Unit : Entity
         }
     }
     
+    //Throw this in another file, math function.
     public static float[] quadForm(float a, float b, float c)
     {
         float preRoot = b * b - 4f * a * c;
         float[] roots = new float[2];
         if (preRoot < 0f)
         {
-            return float.NaN;
+            return new float[] { float.NaN }
         }
         else
         {
             roots[0] = (-1f * (float)Math.Sqrt(preRoot) - b) / (2.0f * a);
             roots[1] = (1f * (float)Math.Sqrt(preRoot) - b) / (2.0f * a);
         }
+        
         return roots;
     }
+    
     
     public float TimeToStopInDirection()
     {
