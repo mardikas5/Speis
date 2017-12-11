@@ -5,6 +5,26 @@ using UnityEngine;
 
 public class Placement<Singleton> : MonoBehaviour
 {
+    [Serializable]
+    public class InputHandler
+    {
+        public KeyCode startPlacementKey =      KeyCode.R;
+        public KeyCode swapPortKey =            KeyCode.H;
+        public KeyCode finalizeConnectionKey =  KeyCode.J;
+        
+        public Func<bool> startPlacement = isKeyDown( startPlacementKey );
+        public Func<bool> swapPort = isKeyDown( swapPortKey );
+        public Func<bool> finalizeConnection = isKeyDown( finalizeConnectionKey );
+        
+        public bool isKeyDown( KeyCode k)
+        {
+            return Input.GetKeyDown(k);
+        }
+    }
+    
+    [SerializeField]
+    public InputsHandler inputsHandler;
+    
     public GameObject testObject;
     public GameObject Placing;
     
@@ -16,10 +36,9 @@ public class Placement<Singleton> : MonoBehaviour
 
     public event Action<GameObject> BuildingPlaced;
 
-
     void Start()
     {
-        //Some Init Stuff;
+
     }
 
 
@@ -39,7 +58,7 @@ public class Placement<Singleton> : MonoBehaviour
     
     public void UpdatePlacement()
     {
-        if ( Input.GetKeyDown( KeyCode.H ) )
+        if ( inputsHandler.startPlacement() )
         {
             if( Placing == null )
             {
@@ -103,12 +122,9 @@ public class Placement<Singleton> : MonoBehaviour
 
 
     //can add callback to some value
-    public IEnumerator TryConnectRoutine( float distance, GameObject Placing, Action<bool> swapPort )
+    public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
     {
-        bool doSwapPort             = Input.GetKeyDown( KeyCode.K );
-        bool doFinalizeConnection   = Input.GetKeyDown( KeyCode.J );
-        
-        
+
         ConnectorEnd ConnectToStation = null;
         ConnectorEnd PartEnd = null;
         ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
@@ -127,7 +143,7 @@ public class Placement<Singleton> : MonoBehaviour
         //get the closest connector that is able to connect.
         while( Candidates.Count > 0 )
         {
-            if( doSwapPort )
+            if( inputsHandler.swapPort() )
             {
                 Debug.Log( "Swapping Port" );
                 
@@ -155,7 +171,7 @@ public class Placement<Singleton> : MonoBehaviour
                 PartEnd = null;
             }
             
-            if ( doFinalizeConnection )
+            if ( inputsHandler.finalizeConnection() )
             {
                 if ( FinalizeConnection( StationEnd.Connector, PartEnd.Connector, Placing ) != null)
                 {

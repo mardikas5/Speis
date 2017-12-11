@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 [Serializable]
 public class Singleton<T> where T : class
-{ 
+{
     public Singleton()
     {
          Console.WriteLine(typeof(T).ToString());
@@ -24,5 +24,4 @@ public class Singleton<T> where T : class
             return _instance;
         }
     }
-    
 }

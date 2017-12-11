@@ -49,7 +49,7 @@ public class Unit : Entity
         
         if (MoveDirection != Vector3.zero )
         {
-            rb.Velocity += 
+            //rb.Velocity += 
         }
         
         
@@ -64,32 +64,26 @@ public class Unit : Entity
         
         Vector3 BoostToDirection( BoostTowards );
         
-        
-        //if the vehicle is going faster than it can stop at specified point
-        if (rb.Velocity.x > NeededDir.x *  )
-        if (rb.Velocity.y > )
-        if (rb.Velocity.z )
-        rb.Velocity += 
+        float xTime = TimeToPoint( NeededDir.x, rb.Velocity.x, 1f )
+        float yTime = TimeToPoint( NeededDir.y, rb.Velocity.y, 1f )
+        float zTime = TimeToPoint( NeededDir.z, rb.Velocity.z, 1f )
         
         
-    }
-    
-    
-    public float TimeToTargetX( )
-    {
+        Vector3 timesToTarget = new Vector3( xTime, yTime, zTime );
+        Vector3 Accel = new Vector3( 1f, 1f, 1f );
         
+        //same sign, velocity over acceleration is less than time to point.
+        if ( ( rb.Velocity.x / Accel.x ) < TimeToPoint + Time.fixedDeltaTime)
+        {
+            //start slowing down
+        }
+        else
+        {
+            //speed up
+        }
     }
     
-    public float TimeToTargetY( )
-    {
-        return 
-    }
-    
-    public float TimeToTargetZ( )
-    {
-        return 
-    }
-    
+
     //s = displacement, u = initial velocity, a = acceleration
     public float TimeToPoint( float s, float u, float a )
     {
@@ -117,16 +111,16 @@ public class Unit : Entity
     public static float[] quadForm(float a, float b, float c)
     {
         float preRoot = b * b - 4f * a * c;
-        float[] roots = new float[2];
+        
         if (preRoot < 0f)
         {
             return new float[] { float.NaN }
         }
-        else
-        {
-            roots[0] = (-1f * (float)Math.Sqrt(preRoot) - b) / (2.0f * a);
-            roots[1] = (1f * (float)Math.Sqrt(preRoot) - b) / (2.0f * a);
-        }
+
+        float[] roots = new float[2];
+
+        roots[0] = (-1f * (float)Math.Sqrt(preRoot) - b) / (2.0f * a);
+        roots[1] = (1f * (float)Math.Sqrt(preRoot) - b) / (2.0f * a);
         
         return roots;
     }

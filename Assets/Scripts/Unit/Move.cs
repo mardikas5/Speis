@@ -12,8 +12,6 @@ namespace UnitCommand
         public override IEnumerator CommandCoroutine()
         {
             yield return StartCoroutine( base.CommandCoroutine );
-            
-            
         }
     }
 }
