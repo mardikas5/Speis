@@ -6,7 +6,6 @@ public class Singleton<T> where T : class
 {
     public Singleton()
     {
-         Console.WriteLine(typeof(T).ToString());
          if (_instance != null)
          {
              Console.WriteLine("Instance already exists");

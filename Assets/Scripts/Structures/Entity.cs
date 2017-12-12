@@ -9,6 +9,7 @@ public class Entity : MonoBehaviour
     public Vector3 pos = Vector3.zero;
     
     public string Name = "unNamedEntity";
+    
     public string GUID = "";
     
     public virtual bool Initialize()
@@ -25,6 +26,7 @@ public class Entity : MonoBehaviour
         }
         
         Initialized = true;
+        
         return true;
     }
     
