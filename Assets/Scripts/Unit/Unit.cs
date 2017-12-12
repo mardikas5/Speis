@@ -24,7 +24,7 @@ public class Unit : Entity
         
         private rigidbody rb;
         
-        //These should be in local space.
+        //This should be in local space.
         public float[6] DirectionalSpeed = new float[6] { 1, 1, 1, 1, 1, 1 };
         
         public Movement( Unit t )
@@ -42,7 +42,7 @@ public class Unit : Entity
 
         public virtual bool hasReachedTarget( Vector3 Point )
         {
-            return Vector3.Distance(Point, transform.Position) < .5f
+            return Vector3.Distance(Point, transform.Position) < unit.InteractionDistance;
         }
         
         protected virtual float MoveToPoint( Vector3 Point, bool stopAtTarget = true )
@@ -149,6 +149,10 @@ public class Unit : Entity
     
     protected Rigidbody rb;
     
+    public Coroutine RunningCommand = null;
+    
+    public float InteractionDistance = .5f;
+    
     public Movement Movement;
     
     public List<UnitCommand> Commands = new List<UnitCommand>();
@@ -180,16 +184,30 @@ public class Unit : Entity
             return;
         }
         
-        Movement.MoveToPoint( MovementTarget );
+        if ( Commands.Length > 0 && Commands[0].Running == null )
+        {
+            Commands[0].Owner = this;
+            Commands[0].OnCommandComplete += CommandEndHandler;
+            Commands[0].Run();
+        }
+    }
+    
+    public virtual void CommandEndHandler( Command c )
+    {
+        //should be at index 0.
+        Commands.Remove(c);
+        
+        if ( RunningCommand == c )
+        {
+            RunningCommand = null;
+        }
+        
     }
     
     public override void Tick()
     {
         
     }
-    
-    
-    
     
     public bool signMatches(this float f, float o)
     {
