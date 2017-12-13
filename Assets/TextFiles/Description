@@ -2,6 +2,7 @@ Space station building sim.
 
 
 Improve your station with various parts.
+
     -Hangar             : able to station a number of ships
     -Ore processing     : processes ore that miners have returned to the station
     -Science            : able to unlock new technologies to be used
@@ -36,4 +37,7 @@ Interactions
     -Map
         -Slanted downwards view of a sector in space.
             -Objects become visible dependent on scan range / base upgrades.
-        
+
+
+
+

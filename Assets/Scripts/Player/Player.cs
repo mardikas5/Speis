@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 
-public class Player : Entity
+public class Player
 {
-    public Player()
-    {
-        
-    }
+    public string Name;
+    
+    //
 }

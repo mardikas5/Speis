@@ -13,7 +13,6 @@ public class Simulation : Singleton<Simulation>
     
     public void Register(Entity t) //More generic object
     {
-        MyDebug.DebugWrite(t.Name);
         Entities.Add(t);
     }
 

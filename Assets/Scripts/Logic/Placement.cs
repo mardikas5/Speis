@@ -35,13 +35,7 @@ public class Placement<Singleton> : MonoBehaviour
     public Coroutine PlacementCoroutine;
 
     public event Action<GameObject> BuildingPlaced;
-
-    void Start()
-    {
-
-    }
-
-
+    
     public void SetPlacing( GameObject placing )
     {
         Placing = Instantiate( placing );
@@ -124,7 +118,6 @@ public class Placement<Singleton> : MonoBehaviour
     //can add callback to some value
     public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
     {
-
         ConnectorEnd ConnectToStation = null;
         ConnectorEnd PartEnd = null;
         ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
@@ -134,7 +127,6 @@ public class Placement<Singleton> : MonoBehaviour
         {
             yield break;
         }
-
 
         List<ConnectorEnd> Candidates = Placing.transform.root.GetComponentsInChildren<ConnectorEnd>().ToList();
 
