@@ -5,6 +5,16 @@ using rb = actor.rb;
 
 namespace ActorUtils
 {
+    public enum Direction
+    {
+        Left    = 0, // x
+        Right   = 1, //-x
+        Up      = 2, // y
+        Down    = 3, //-y
+        Forward = 4, // z
+        Back    = 5  //-z
+    }
+    
     [System.Serializable]
     public class Movement : Behaviour
     {

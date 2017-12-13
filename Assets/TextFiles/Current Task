@@ -1,12 +1,5 @@
 StationBuilding
-
-    -Make resourceproducer work. --Done? Test in unity.
+    -Placing down parts, by using connectors.                     
     
-    -Placing down parts.                            
-    
-    -Parts are part of station.     --Parts have owners.
-    
-    -Parts generate items for storage of station.
-    
-    -Parts are placed by connectors.
+    -Parts are part of station.
     

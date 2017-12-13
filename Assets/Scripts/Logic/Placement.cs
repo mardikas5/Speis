@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+//namespace Structures
 public class Placement<Singleton> : MonoBehaviour
 {
     [Serializable]
@@ -180,6 +182,7 @@ public class Placement<Singleton> : MonoBehaviour
         }
     }
 
+    //Call finalizePlacement?
     public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, GameObject Placing )
     {
         if ( Placing == null )

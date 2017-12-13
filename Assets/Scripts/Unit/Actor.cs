@@ -2,15 +2,7 @@ using System;
 using UnityEngine;
 using ActorUtils;
 
-public enum Direction
-{
-    Left    = 0, // x
-    Right   = 1, //-x
-    Up      = 2, // y
-    Down    = 3, //-y
-    Forward = 4, // z
-    Back    = 5  //-z
-}
+
 
 [System.Serializable, RequireComponent( typeof(Rigidbody) )]
 public class Actor : Entity
@@ -46,6 +38,9 @@ public class Actor : Entity
         
     }
     
+    
+    
+    //Math functions...
     public bool signMatches(this float f, float o)
     {
         if (f.isNegative() && o.isNegative() || !f.isNegative() && !o.isNegative)
