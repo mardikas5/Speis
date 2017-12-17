@@ -16,6 +16,6 @@ public class Enemy : Entity
     
     public override void Tick()
     {
-        base.pos += new Position(rand.Next(-1,2),rand.Next(-1,2));
+        //base.pos += new position(rand.Next(-1,2),rand.Next(-1,2));
     }
 }

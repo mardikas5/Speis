@@ -5,6 +5,6 @@ public class Player
 {
     public string Name;
     
-    public GUID TeamID;
+    public Guid TeamID;
     
 }

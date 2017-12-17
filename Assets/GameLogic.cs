@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameLogic : MonoBehaviour
+public class GameLogic : Singleton<GameLogic>
 {
 
     public ResourceDatabase p = null;
@@ -44,7 +44,7 @@ public class GameLogic : MonoBehaviour
 
     public static void StandardStart()
     {
-        Simulation sim = new Simulation();
+        Simulation sim = Simulation.Instance;
         sim.Initialize();
         foreach (Entity t in FindObjectsOfType<Entity>())
         {

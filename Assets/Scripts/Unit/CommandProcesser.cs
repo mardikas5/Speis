@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ActorUtils
 {
-    public CommandProcesser : Behaviour
+    public class CommandProcesser : Element
     {
         public Coroutine RunningCommand = null;
         
@@ -12,19 +12,24 @@ namespace ActorUtils
         
         public void FixedUpdate()
         {
-            if (Commands != null && Commands.Length > 0)
+            if (Commands != null && Commands.Count > 0 && RunningCommand == null)
             {
                 Commands[0].OnCommandComplete += CommandEndHandler;
                 RunningCommand = Commands[0].Run( this );
             }
         }
+
+        public void AddCommand( Command c)
+        {
+            Commands.Add( c );
+        }
         
         public virtual void CommandEndHandler( Command c )
         {
             //should be at index 0.
-            Commands.Remove(c);
+            Commands.Remove( c );
             
-            if ( RunningCommand == c )
+            if ( RunningCommand == c.Running )
             {
                 RunningCommand = null;
             }

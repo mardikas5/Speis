@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActorUtils
 {
     [System.Serializable]
-    public virtual class Command
+    public abstract class Command
     {
         public static string _missingOwner = "Actor command has no owner";
         public static string _runningNotNull = "Ran a Actor command, whilst it was already running";
@@ -18,9 +19,14 @@ namespace ActorUtils
         
         public Coroutine Running;//get private set?
         
-        
-        public virtual Coroutine Run( CommandProcesser Owner );
+        public Command( CommandProcesser Owner )
         {
+            this.Owner = Owner;
+        }
+        
+        public virtual Coroutine Run( CommandProcesser Owner )
+        {
+            
             if (Running != null)
             {
                 Debug.Log( _runningNotNull );
@@ -29,16 +35,16 @@ namespace ActorUtils
             if ( Owner == null )
             {
                 Debug.Log( _missingOwner );
-                return;
+                return null;
             }
             
             Running = Owner.StartCoroutine( CommandCoroutine( OnCommandComplete ) );
             return Running;
         }
         
-        private IEnumerator CommandCoroutine( Action<ActorCommand> CallBack )
+        private IEnumerator CommandCoroutine( Action<Command> CallBack )
         {
-            yield return StartCoroutine( CommandInner() );
+            yield return  Owner.StartCoroutine( CommandInner() );
            
             if (CallBack != null)
             {

@@ -20,7 +20,7 @@ public class Entity : MonoBehaviour
             return false;
         }
         
-        if (GUID == string.null || GUID == string.empty)
+        if ( string.IsNullOrEmpty( GUID.ToString() ))
         {
             GUID = System.Guid.NewGuid().ToString();
         }
@@ -32,7 +32,7 @@ public class Entity : MonoBehaviour
     
     public virtual bool Load()
     {
-        
+        return false;
     }
     
     public virtual void Tick()

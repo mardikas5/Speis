@@ -1,35 +1,69 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[Serializable]
+public class PlacementObj
+{
+    public Dictionary<Transform, int> LayermaskValues;
+
+    public GameObject Placement;
+
+    public PlacementObj( GameObject p )
+    {
+        Placement = p;
+        LayermaskValues = new Dictionary<Transform, int>();
+        foreach( Collider t in p.gameObject.GetComponentsInChildren<Collider>().ToList() )
+        {
+            LayermaskValues.Add( t.transform, t.gameObject.layer );
+        }
+    }
+
+    public void Restore()
+    {
+        foreach( KeyValuePair<Transform, int> t in LayermaskValues )
+        {
+            t.Key.gameObject.layer = t.Value;
+        }
+    }
+}
 
 //namespace Structures
-public class Placement<Singleton> : MonoBehaviour
+public class Placement : Singleton<Placement>
 {
     [Serializable]
     public class InputHandler
     {
-        public KeyCode startPlacementKey =      KeyCode.R;
-        public KeyCode swapPortKey =            KeyCode.H;
-        public KeyCode finalizeConnectionKey =  KeyCode.J;
-        
-        public Func<bool> startPlacement = isKeyDown( startPlacementKey );
-        public Func<bool> swapPort = isKeyDown( swapPortKey );
-        public Func<bool> finalizeConnection = isKeyDown( finalizeConnectionKey );
-        
-        public bool isKeyDown( KeyCode k)
+        public KeyCode startPlacementKey = KeyCode.R;
+        public KeyCode swapPortKey = KeyCode.H;
+        public KeyCode finalizeConnectionKey = KeyCode.J;
+
+        public Func<bool> startPlacement;
+        public Func<bool> swapPort;
+        public Func<bool> finalizeConnection;
+
+        public void Init()
         {
-            return Input.GetKeyDown(k);
+            startPlacement = () => isKeyDown( startPlacementKey );
+            swapPort = () => isKeyDown( swapPortKey );
+            finalizeConnection = () => isKeyDown( finalizeConnectionKey );
+        }
+
+        public bool isKeyDown( KeyCode k )
+        {
+            return Input.GetKeyDown( k );
         }
     }
-    
+
     [SerializeField]
-    public InputsHandler inputsHandler;
-    
+    public InputHandler inputHandler;
+
     public GameObject testObject;
-    public GameObject Placing;
-    
+    //public GameObject Placing;
+    public PlacementObj pObj;
+
     public bool placementActive;
 
     public Camera placementCam;
@@ -37,33 +71,44 @@ public class Placement<Singleton> : MonoBehaviour
     public Coroutine PlacementCoroutine;
 
     public event Action<GameObject> BuildingPlaced;
-    
+
     public void SetPlacing( GameObject placing )
     {
-        Placing = Instantiate( placing );
+        GameObject Placing = Instantiate( placing );
+        pObj = new PlacementObj( Placing );
         Placing.gameObject.layer = 1 << 1;
         Placing.gameObject.GetComponentsInChildren<Collider>().ToList().ForEach( x => x.gameObject.layer = 1 << 1 );
     }
 
+    public override void Start()
+    {
+        base.Start();
+        inputHandler.Init();
+    }
 
     void Update()
     {
         UpdatePlacement();
     }
-    
-    
+
+
     public void UpdatePlacement()
     {
-        if ( inputsHandler.startPlacement() )
+        placementActive = PlacementCoroutine != null;
+
+        if( inputHandler.startPlacement() )
         {
-            if( Placing == null )
+
+            if( pObj.Placement == null )
             {
                 SetPlacing( testObject );
             }
-        }
-        if( PlacementCoroutine == null && Placing != null )
-        {
-            PlacementCoroutine = StartCoroutine( TryConnectRoutine( 5f, Placing ) );
+
+            if( PlacementCoroutine == null && pObj != null )
+            {
+                Debug.Log( "Placing" );
+                PlacementCoroutine = StartCoroutine( TryConnectRoutine( 5f, pObj, () => { PlacementCoroutine = null; pObj = null; } ) );
+            }
         }
     }
 
@@ -118,31 +163,28 @@ public class Placement<Singleton> : MonoBehaviour
 
 
     //can add callback to some value
-    public IEnumerator TryConnectRoutine( float distance, GameObject Placing )
+    public IEnumerator TryConnectRoutine( float distance, PlacementObj placing, Action onCompleted = null )
     {
         ConnectorEnd ConnectToStation = null;
         ConnectorEnd PartEnd = null;
         ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
-        
 
-        if( StationEnd == null )
+        if( StationEnd == null || placing.Placement == null )
         {
             yield break;
         }
 
-        List<ConnectorEnd> Candidates = Placing.transform.root.GetComponentsInChildren<ConnectorEnd>().ToList();
+        List<ConnectorEnd> Candidates = placing.Placement.transform.root.GetComponentsInChildren<ConnectorEnd>().ToList();
 
         PartEnd = Candidates[0];
 
         //get the closest connector that is able to connect.
         while( Candidates.Count > 0 )
         {
-            if( inputsHandler.swapPort() )
+            if( inputHandler.swapPort() )
             {
-                Debug.Log( "Swapping Port" );
-                
                 PartEnd = Candidates[0];
-                
+
                 for( int i = 0; i < Candidates.Count; i++ )
                 {
                     if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
@@ -151,25 +193,21 @@ public class Placement<Singleton> : MonoBehaviour
                     }
                 }
 
-                if( TryPlaceTogether( StationEnd, PartEnd, Placing ) )
+                if( TryPlaceTogether( StationEnd, PartEnd, placing.Placement ) )
                 {
-                    CurrentPort = PartEnd;
                     Candidates.Remove( PartEnd );
-                    Debug.Log( "Fits" );
                 }
                 else
                 {
                     Candidates.Remove( PartEnd );
                 }
-
-                PartEnd = null;
             }
-            
-            if ( inputsHandler.finalizeConnection() )
+
+            if( inputHandler.finalizeConnection() )
             {
-                if ( FinalizeConnection( StationEnd.Connector, PartEnd.Connector, Placing ) != null)
+                if( FinalizeConnection( StationEnd.connector, PartEnd.connector, placing ) != null )
                 {
-                    yield break;
+                    break;
                 }
             }
 
@@ -180,26 +218,36 @@ public class Placement<Singleton> : MonoBehaviour
         {
             Debug.Log( "Couldn't find suitable candidate" );
         }
+
+        if( onCompleted != null )
+        {
+            onCompleted();
+        }
     }
 
     //Call finalizePlacement?
-    public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, GameObject Placing )
+    public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, PlacementObj remove )
     {
-        if ( Placing == null )
+        if( remove == null )
         {
             return null;
         }
-        
+
         StationEnd.Connect( PartEnd );
-        
-        GameObject FinalPlacement = Instantiate( Placing.gameObject, Placing.Transform.Position, Placing.Transform.Rotation, null );
-        
-        if ( BuildingPlaced != null )
+
+        if( BuildingPlaced != null )
         {
-            BuildingPlaced( FinalPlacement );
+            BuildingPlaced( remove.Placement );
         }
-        
-        Destroy( Placing );
+
+        remove.Restore();
+
+        return remove.Placement;
+    }
+
+    public void RestorePlacement()
+    {
+
     }
 
     public bool TryPlaceTogether( ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
@@ -209,7 +257,7 @@ public class Placement<Singleton> : MonoBehaviour
 
         Placing.transform.forward = -StationEnd.transform.forward;
         Placing.transform.eulerAngles += ( Placing.transform.eulerAngles - PartEnd.transform.eulerAngles );
-  
+
         Placing.transform.position += ( StationEnd.transform.position - PartEnd.transform.position );
 
         List<Collider> inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, ~1 << 1, QueryTriggerInteraction.Ignore ).ToList();

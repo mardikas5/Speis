@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
-public class Singleton<T> where T : class
+public class Singleton<T> : MonoBehaviour where T : class
 {
-    public Singleton()
+    public virtual void Start()
     {
-         if (_instance != null)
+        if (_instance != null)
          {
              Console.WriteLine("Instance already exists");
              return;

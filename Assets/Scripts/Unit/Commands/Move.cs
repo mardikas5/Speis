@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -9,23 +11,29 @@ namespace ActorUtils
     public class Move : Command
     {
         private Vector3 Position;
-        
-        public Movement( Unit owner, Vector3 position ) : base( owner )
+
+        public bool CanRun( Actor actor )
+        {
+            return actor.Elements.Find( ( x ) => x.GetType() == typeof( Movement ) );
+        }
+
+        public Move( CommandProcesser Owner, Vector3 position ) : base( Owner )
         {
             Position = position;
         }
-        
-        protected override IEnumerator CommandInner( Action CallBack )
+
+        protected override IEnumerator CommandInner()
         {
-            while ( !unit.Movement.hasReachedTarget )
+            Movement runBehaviour = Owner.actor.GetComponent<Movement>();
+
+            while( !runBehaviour.hasReachedTarget( Position ) )
             {
-                if (unit.MovementTarget != Position)
-                {
-                    unit.Movement.MoveToPoint( Position );
-                }
-                
-                yield return new waitForFixedUpdate();
+                runBehaviour.MoveToPoint( Position );
+
+                yield return new WaitForFixedUpdate();
             }
+
+            Debug.Log("done cmd");
         }
     }
 }

@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace ActorUtils
 {
-    [RequireComponent( typeof(Actor) )]
-    public class Behaviour : MonoBehaviour
+    [RequireComponent( typeof( Actor ) )]
+    public class Element : MonoBehaviour
     {
-        public GUID entityGUID;
+        //saving
+        public Guid entityGUID;
         
         public Actor actor;
         

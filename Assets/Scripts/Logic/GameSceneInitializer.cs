@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ RequireComponent(typeof( Simulation ), typeof( Placement )) ]
+[ RequireComponent(typeof( Simulation )) ]
 public class GameSceneInitializer<Singleton> : MonoBehaviour
 {
     public bool InitAttachedBehaviours = true;
@@ -10,7 +10,7 @@ public class GameSceneInitializer<Singleton> : MonoBehaviour
     public MonoBehaviour[] InitializeAtStart = new MonoBehaviour[]
     {
 
-    }
+    };
     
     public void Start()
     {
