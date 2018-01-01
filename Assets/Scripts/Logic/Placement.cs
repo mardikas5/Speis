@@ -21,6 +21,11 @@ public class PlacementObj
         }
     }
 
+    public void Destroy()
+    {
+        GameObject.Destroy( Placement );
+    }
+
     public void Restore()
     {
         foreach( KeyValuePair<Transform, int> t in LayermaskValues )
@@ -39,16 +44,19 @@ public class Placement : Singleton<Placement>
         public KeyCode startPlacementKey = KeyCode.R;
         public KeyCode swapPortKey = KeyCode.H;
         public KeyCode finalizeConnectionKey = KeyCode.J;
+        public KeyCode endPlacementKey = KeyCode.Escape;
 
         public Func<bool> startPlacement;
         public Func<bool> swapPort;
         public Func<bool> finalizeConnection;
+        public Func<bool> endPlacement;
 
         public void Init()
         {
             startPlacement = () => isKeyDown( startPlacementKey );
             swapPort = () => isKeyDown( swapPortKey );
             finalizeConnection = () => isKeyDown( finalizeConnectionKey );
+            endPlacement = () => isKeyDown( endPlacementKey );
         }
 
         public bool isKeyDown( KeyCode k )
@@ -98,20 +106,31 @@ public class Placement : Singleton<Placement>
 
         if( inputHandler.startPlacement() )
         {
-
-            if( pObj.Placement == null )
-            {
-                SetPlacing( testObject );
-            }
-
-            if( PlacementCoroutine == null && pObj != null )
-            {
-                Debug.Log( "Placing" );
-                PlacementCoroutine = StartCoroutine( TryConnectRoutine( 5f, pObj, () => { PlacementCoroutine = null; pObj = null; } ) );
-            }
+            StartPlacementHandler();
+        }
+        if( inputHandler.endPlacement() )
+        {
+            BreakPlacement();
         }
     }
 
+    private void StartPlacementHandler()
+    {
+        if( pObj == null )
+        {
+            return;
+        }
+        if( pObj.Placement == null )
+        {
+            SetPlacing( testObject );
+        }
+
+        if( PlacementCoroutine == null && pObj != null )
+        {
+            Debug.Log( "Placing" );
+            PlacementCoroutine = StartCoroutine( TryConnectRoutine( 5f, pObj, () => { PlacementCoroutine = null; pObj = null; } ) );
+        }
+    }
 
     public Collider GetClosestCollider( Vector3 pos, float radius, int layerMask )
     {
@@ -162,12 +181,12 @@ public class Placement : Singleton<Placement>
     }
 
 
-    //can add callback to some value
     public IEnumerator TryConnectRoutine( float distance, PlacementObj placing, Action onCompleted = null )
     {
-        ConnectorEnd ConnectToStation = null;
+        //ConnectorEnd ConnectToStation = null;
         ConnectorEnd PartEnd = null;
         ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
+        int partIndex = -1;
 
         if( StationEnd == null || placing.Placement == null )
         {
@@ -178,29 +197,30 @@ public class Placement : Singleton<Placement>
 
         PartEnd = Candidates[0];
 
+        for( int i = 0; i < Candidates.Count; i++ )
+        {
+            if( !TryPlaceTogether( StationEnd, Candidates[i], placing.Placement ) )
+            {
+                Candidates.RemoveAt( i );
+                i--;
+            }
+        }
+
         //get the closest connector that is able to connect.
-        while( Candidates.Count > 0 )
+        while( Candidates.Count > 0 && pObj != null && pObj.Placement != null )
         {
             if( inputHandler.swapPort() )
             {
-                PartEnd = Candidates[0];
+                partIndex++;
 
-                for( int i = 0; i < Candidates.Count; i++ )
+                if( partIndex >= Candidates.Count )
                 {
-                    if( ( StationEnd.transform.position - Candidates[i].transform.position ).sqrMagnitude < ( StationEnd.transform.position - PartEnd.transform.position ).sqrMagnitude )
-                    {
-                        PartEnd = Candidates[i];
-                    }
+                    partIndex = 0;
                 }
 
-                if( TryPlaceTogether( StationEnd, PartEnd, placing.Placement ) )
-                {
-                    Candidates.Remove( PartEnd );
-                }
-                else
-                {
-                    Candidates.Remove( PartEnd );
-                }
+                PartEnd = Candidates[partIndex];
+
+                TryPlaceTogether( StationEnd, PartEnd, placing.Placement );
             }
 
             if( inputHandler.finalizeConnection() )
@@ -217,6 +237,7 @@ public class Placement : Singleton<Placement>
         if( Candidates.Count == 0 )
         {
             Debug.Log( "Couldn't find suitable candidate" );
+            BreakPlacement();
         }
 
         if( onCompleted != null )
@@ -226,9 +247,9 @@ public class Placement : Singleton<Placement>
     }
 
     //Call finalizePlacement?
-    public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, PlacementObj remove )
+    public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, PlacementObj placing )
     {
-        if( remove == null )
+        if( placing == null )
         {
             return null;
         }
@@ -237,12 +258,22 @@ public class Placement : Singleton<Placement>
 
         if( BuildingPlaced != null )
         {
-            BuildingPlaced( remove.Placement );
+            BuildingPlaced( placing.Placement );
         }
 
-        remove.Restore();
+        placing.Restore();
 
-        return remove.Placement;
+        return placing.Placement;
+    }
+
+    public void BreakPlacement()
+    {
+        if( pObj == null )
+        {
+            return;
+        }
+        pObj.Destroy();
+        pObj = null;
     }
 
     public void RestorePlacement()
@@ -250,6 +281,13 @@ public class Placement : Singleton<Placement>
 
     }
 
+    /// <summary>
+    /// Tries to fit the connectors together in the game world.
+    /// </summary>
+    /// <param name="StationEnd"></param>
+    /// <param name="PartEnd"></param>
+    /// <param name="Placing"></param>
+    /// <returns>True if parts fit together.</returns>
     public bool TryPlaceTogether( ConnectorEnd StationEnd, ConnectorEnd PartEnd, GameObject Placing )
     {
         //check only the part collider.

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 [System.Serializable]
 public class Station : Structure
@@ -10,85 +11,94 @@ public class Station : Structure
     public List<T> PartsOfType<T>() where T : StructureBehaviour
     {
         List<T> returnValues = new List<T>();
-        
-        for (int i = 0; i < Parts.Count; i++)
+
+        for( int i = 0; i < Parts.Count; i++ )
         {
-            if (Parts[i].StructureBehaviours == null)
+            if( Parts[i].StructureBehaviours == null )
             {
-                continue;   
+                continue;
             }
 
-            for (int k = 0; k < Parts[i].StructureBehaviours.Count; k++)
+            for( int k = 0; k < Parts[i].StructureBehaviours.Count; k++ )
             {
-                if (Parts[i].StructureBehaviours[k] == null)
+                if( Parts[i].StructureBehaviours[k] == null )
                 {
-                    continue;   
+                    continue;
                 }
-                
-                if (Parts[i].StructureBehaviours[k].GetType() == typeof(T))
+
+                if( Parts[i].StructureBehaviours[k].GetType() == typeof( T ) )
                 {
-                    returnValues.Add((T)Parts[i].StructureBehaviours[k]);
+                    returnValues.Add( (T)Parts[i].StructureBehaviours[k] );
                 }
             }
         }
-        
+
         return returnValues;
     }
 
 
     public override bool Initialize()
     {
-        
-       if ( !base.Initialize() )
-       {
-           return false;
-       }
+
+        if( !base.Initialize() )
+        {
+            return false;
+        }
 
         Owner = this;
-        Parts = new List<Structure>();
-
+        Parts = new List<Structure>() { this };
+        //Parts.Add( this );
         return true;
     }
-    
-    public void TryDeposit(List<Resource> resources)
+
+    public bool TryDeposit( List<Resource> resources )
     {
-        foreach (Resource r in resources)
+        foreach( Resource r in resources )
         {
-            TryDeposit(r);
+            if( TryDeposit( r ) )
+            {
+                return true;
+            }
         }
+        return false;
     }
-    
-    public void TryDeposit(Resource r)
+
+    public bool TryDeposit( Resource r )
     {
         List<Storage> Storages = PartsOfType<Storage>();
-        
-        for (int i = 0; i < Storages.Count;i++)
+
+        for( int i = 0; i < Storages.Count; i++ )
         {
-            Storages[i].Deposit(r);
+            r = Storages[i].Deposit( r );
+            if( r.Amount == 0f ) // less than too?
+            {
+                return true;
+            }
         }
+        return false;
     }
-    
-    public void Register(Structure structure)
+
+    public void Register( Structure structure )
     {
-        if (Parts.FirstOrDefault(res => res == structure) != null)
+        if( Parts.FirstOrDefault( res => res == structure ) != null )
         {
             return;
         }
-        
-        if (!structure.Initialized)
+
+        if( !structure.Initialized )
         {
             structure.Initialize();
         }
-        
+
         structure.Owner = this;
-        
-        Parts.Add(structure);
-        
-        structure.OnDestroyed += () => OnPartDestroyedHandler(structure);
+
+        Parts.Add( structure );
+
+        structure.OnDestroyed += () => OnPartDestroyedHandler( structure );
     }
-    
-    public void OnPartDestroyedHandler(Structure part)
+
+    public void OnPartDestroyedHandler( Structure part )
     {
-         Parts.Remove(part);
+        Parts.Remove( part );
     }
 }

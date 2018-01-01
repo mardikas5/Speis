@@ -30,6 +30,7 @@ public class Entity : MonoBehaviour
         return true;
     }
     
+    //saving and loading todo
     public virtual bool Load()
     {
         return false;

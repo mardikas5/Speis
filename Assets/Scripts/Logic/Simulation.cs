@@ -6,19 +6,20 @@ public class Simulation : Singleton<Simulation>
     //make simulationObjectList
     public List<Entity> Entities;
 
-    public void Initialize()
+    public override void Initialize()
     {
+        base.Initialize();
         Entities = new List<Entity>();
     }
-    
-    public void Register(Entity t) //More generic object
+
+    public void Register( Entity t ) //More generic object
     {
-        Entities.Add(t);
+        Entities.Add( t );
     }
 
     public void Tick()
     {
-        foreach (Entity t in Entities)
+        foreach( Entity t in Entities )
         {
             t.Tick();
         }

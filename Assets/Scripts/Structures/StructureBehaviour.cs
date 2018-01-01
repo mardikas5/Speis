@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+[System.Serializable, RequireComponent( typeof( Structure ) )]
 public class StructureBehaviour : MonoBehaviour
 {
     public bool Initialized = false;
+    public bool Enabled = true;
 
     public virtual string Name { get { return _name; } set { _name = value; } }
 
@@ -18,7 +19,7 @@ public class StructureBehaviour : MonoBehaviour
         }
     }
 
-    
+
 
     [SerializeField]
     protected string _name;
@@ -26,9 +27,14 @@ public class StructureBehaviour : MonoBehaviour
     [SerializeField]
     protected Structure _structure;
 
-    public virtual void Init<T>(Structure structure) where T : StructureBehaviour
+    public virtual void Start()
     {
-        if (Initialized)
+        GetComponent<Structure>().RegisterBehaviour( this );
+    }
+
+    public virtual void Init( Structure structure )
+    {
+        if( Initialized )
         {
             return;
         }
@@ -42,5 +48,5 @@ public class StructureBehaviour : MonoBehaviour
     {
 
     }
-    
+
 }

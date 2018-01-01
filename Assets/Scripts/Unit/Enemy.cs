@@ -7,6 +7,7 @@ public class Enemy : Entity
     public Enemy()
     {
         rand = new Random();
+        rand.Next();
     }
     
     public Enemy(char symbol) : this()

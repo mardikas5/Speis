@@ -33,7 +33,12 @@ public interface ITransactionable
 {
     List<Resource> Stored {get; set;}
     
-    void Deposit(Resource res);
+    /// <summary>
+    /// Deposits the resource.
+    /// </summary>
+    /// <param name="res"></param>
+    /// <returns>Resource left over.</returns>
+    Resource Deposit(Resource res);
     
     Resource Withdraw(Resource res);
     

@@ -18,8 +18,9 @@ public class GameLogic : Singleton<GameLogic>
 
 
     // Use this for initialization
-    void Start()
+    public override void Start()
     {
+        base.Start();
         StandardStart();
         EnterTestValues();
         p = ResourceDatabase.Instance;
@@ -46,21 +47,22 @@ public class GameLogic : Singleton<GameLogic>
     {
         Simulation sim = Simulation.Instance;
         sim.Initialize();
-        foreach (Entity t in FindObjectsOfType<Entity>())
+        foreach( Entity t in FindObjectsOfType<Entity>() )
         {
-            sim.Entities.Add(t);
+            sim.Entities.Add( t );
             t.Initialize();
         }
 
 
-        EntityDatabase entityDB = new EntityDatabase();
-        ResourceDatabase resDB = new ResourceDatabase();
-        StructureDatabase structDB = new StructureDatabase();
+        //EntityDatabase entityDB = new EntityDatabase();
+        //ResourceDatabase resDB = new ResourceDatabase();
+        //StructureDatabase structDB = new StructureDatabase();
     }
 
     public static void EnterTestValues()
     {
-        ResourceBase[] Found = Resources.FindObjectsOfTypeAll<ResourceBase>();
+        //ResourceBase[] Found = Resources.FindObjectsOfTypeAll<ResourceBase>();
+        ResourceBase[] Found = Resources.LoadAll<ResourceBase>( "ResourceObjects" );
         Debug.Log( Found.Length );
         ResourceDatabase.Instance.Resources.AddRange( Found );
         StructureDatabase.Instance.Populate();

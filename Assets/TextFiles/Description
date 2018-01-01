@@ -18,6 +18,10 @@ Improve your station with various parts.
     -Medical Bay        : can deal with crew problems that might arise
     -Core               : starting block that is self sufficient, contains everything needed
     -Life Support       : required for crew to stay alive on board, required per number of crew.
+    -Power		: provides power..
+	-some adv power...
+
+
 
 Send out units on various tasks.
     -Mine resources

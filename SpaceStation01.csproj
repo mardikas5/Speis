@@ -7,19 +7,17 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EF4275BA-526D-19B1-D087-2C680B4EE894}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp.dll</AssemblyName>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.2.0f3</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -222,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameLogic.cs" />
+    <Compile Include="Assets\Scripts\Camera\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\Console\ConsoleExtentions.cs" />
     <Compile Include="Assets\Scripts\Console\Visuals.cs" />
     <Compile Include="Assets\Scripts\Console\World.cs" />
@@ -230,15 +229,20 @@
     <Compile Include="Assets\Scripts\Databases\StructureDatabase.cs" />
     <Compile Include="Assets\Scripts\Debug\ExtDebug.cs" />
     <Compile Include="Assets\Scripts\Debug\MyDebug.cs" />
+    <Compile Include="Assets\Scripts\Environment\Mineable.cs" />
+    <Compile Include="Assets\Scripts\Environment\Pickable.cs" />
     <Compile Include="Assets\Scripts\Logic\Const.cs" />
     <Compile Include="Assets\Scripts\Logic\GameSceneInitializer.cs" />
     <Compile Include="Assets\Scripts\Logic\Placement.cs" />
     <Compile Include="Assets\Scripts\Logic\Simulation.cs" />
+    <Compile Include="Assets\Scripts\MonoEventHandler\OnDestroySpawn.cs" />
     <Compile Include="Assets\Scripts\obj\Debug\netcoreapp2.0\consoleApp.AssemblyInfo.cs" />
     <Compile Include="Assets\Scripts\Player\Input.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Resource\Resource.cs" />
     <Compile Include="Assets\Scripts\Resource\ResourceBase.cs" />
+    <Compile Include="Assets\Scripts\StationUtility.cs" />
+    <Compile Include="Assets\Scripts\StorageUtility.cs" />
     <Compile Include="Assets\Scripts\Structures\Connector.cs" />
     <Compile Include="Assets\Scripts\Structures\ConnectorEnd.cs" />
     <Compile Include="Assets\Scripts\Structures\Entity.cs" />
@@ -250,18 +254,23 @@
     <Compile Include="Assets\Scripts\Structures\Structure.cs" />
     <Compile Include="Assets\Scripts\Structures\StructureBehaviour.cs" />
     <Compile Include="Assets\Scripts\Structures\Transaction.cs" />
+    <Compile Include="Assets\Scripts\Structures\Turret.cs" />
     <Compile Include="Assets\Scripts\Unit\Actor.cs" />
     <Compile Include="Assets\Scripts\Unit\CommandProcesser.cs" />
     <Compile Include="Assets\Scripts\Unit\Commands\Command.cs" />
     <Compile Include="Assets\Scripts\Unit\Commands\Move.cs" />
     <Compile Include="Assets\Scripts\Unit\Element.cs" />
     <Compile Include="Assets\Scripts\Unit\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Unit\Health.cs" />
     <Compile Include="Assets\Scripts\Unit\Movement.cs" />
     <Compile Include="Assets\Scripts\Unit\Ship.cs" />
     <Compile Include="Assets\Scripts\Utility\FloatExtentions.cs" />
     <Compile Include="Assets\Scripts\Utility\Loader.cs" />
     <Compile Include="Assets\Scripts\Utility\Position.cs" />
     <Compile Include="Assets\Scripts\Utility\Singleton.cs" />
+    <Compile Include="Assets\Scripts\Weapons\LaserWeapon.cs" />
+    <Compile Include="Assets\Scripts\Weapons\LaserWeaponFX.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\obj\Debug\netcoreapp2.0\consoleApp.csproj.FileListAbsolute.txt" />

@@ -1,16 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 [System.Serializable]
 public class ResourceProducer : StructureBehaviour
 {
     public List<Resource> Inputs;
     public List<Resource> Outputs;
+    public float LastProdMultiplier = 0f;
 
     public override void Tick()
     {
-        Produce();
+        base.Tick();
+        if( Enabled )
+        {
+            Produce();
+        }
     }
 
     public void Produce()
@@ -34,6 +40,10 @@ public class ResourceProducer : StructureBehaviour
 
         for( int i = 0; i < Inputs.Count; i++ )
         {
+            if( Inputs[i] == null || Inputs[i].Base == null )
+            {
+                continue;
+            }
             float AmountLeft = Inputs[i].Amount;
 
             List<Resource> StoredNeededResource = resources.Where( x => x.Base == Inputs[i].Base ).ToList();
@@ -52,16 +62,18 @@ public class ResourceProducer : StructureBehaviour
 
             if( AmountLeft > 0 )
             {
-                MyDebug.DebugWrite( "Amounts not matching, ResourceProducer debug" );
+                Debug.Log( "Amounts not matching, ResourceProducer debug" );
             }
         }
 
+        LastProdMultiplier = productionMultiplier;
+
         for( int i = 0; i < Outputs.Count; i++ )
         {
-            produced.Add( Outputs[i].Copy( productionMultiplier ) );
+            produced.Add( Outputs[i].Copy( Outputs[i].Amount * productionMultiplier ) );
         }
 
-        MyDebug.DebugWrite( "Produced: " + produced.Count );
+        //MyDebug.DebugWrite( "Produced: " + produced.Count );
 
         Structure.Owner.TryDeposit( produced );
     }
