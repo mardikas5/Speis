@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class ResourceProducer : StructureBehaviour
 {
-    public List<Resource> Inputs;
-    public List<Resource> Outputs;
+    public List<Storable> Inputs;
+    public List<Storable> Outputs;
     public float LastProdMultiplier = 0f;
 
     public override void Tick()
@@ -27,16 +27,16 @@ public class ResourceProducer : StructureBehaviour
         }
         List<Storage> Storages = Structure.Owner.PartsOfType<Storage>();
 
-        List<Resource> resources = new List<Resource>();
+        List<Storable> resources = new List<Storable>();
 
         for( int i = 0; i < Storages.Count; i++ )
         {
             resources.AddRange( Storages[i].Stored );
         }
 
-        float productionMultiplier = Resource.SmallestNormalizedAvailable( Inputs, resources );
+        float productionMultiplier = Storable.SmallestNormalizedAvailable( Inputs, resources );
 
-        List<Resource> produced = new List<Resource>();
+        List<Storable> produced = new List<Storable>();
 
         for( int i = 0; i < Inputs.Count; i++ )
         {
@@ -46,7 +46,7 @@ public class ResourceProducer : StructureBehaviour
             }
             float AmountLeft = Inputs[i].Amount;
 
-            List<Resource> StoredNeededResource = resources.Where( x => x.Base == Inputs[i].Base ).ToList();
+            List<Storable> StoredNeededResource = resources.Where( x => x.Base == Inputs[i].Base ).ToList();
 
             for( int k = 0; k < StoredNeededResource.Count; k++ )
             {

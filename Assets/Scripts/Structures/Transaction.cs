@@ -5,10 +5,10 @@ using System.Linq;
 
 public class Transaction
 {
-    public void Transfer<T>(T From, T To, Resource Transferred) where T : ITransactionable
+    public void Transfer<T>(T From, T To, Storable Transferred) where T : ITransactionable
     {
-        Resource inStore = From.Get(Transferred.Name);
-        Resource inDeposit = To.Get(Transferred.Name);
+        Storable inStore = From.Get(Transferred.Name);
+        Storable inDeposit = To.Get(Transferred.Name);
         
         if (Transferred.Amount <= 0)
         {
@@ -31,16 +31,16 @@ public class Transaction
 
 public interface ITransactionable
 {
-    List<Resource> Stored {get; set;}
+    List<Storable> Stored {get; set;}
     
     /// <summary>
     /// Deposits the resource.
     /// </summary>
     /// <param name="res"></param>
     /// <returns>Resource left over.</returns>
-    Resource Deposit(Resource res);
+    Storable Deposit(Storable res);
     
-    Resource Withdraw(Resource res);
+    Storable Withdraw(Storable res);
     
-    Resource Get(string Name);
+    Storable Get(string Name);
 }

@@ -1,27 +1,42 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Simulation : Singleton<Simulation>
 {
-    //make simulationObjectList
-    public List<Entity> Entities;
+    [SerializeField]
+    public GameData GameData;
 
     public override void Initialize()
     {
         base.Initialize();
-        Entities = new List<Entity>();
+        if( GameData == null )
+        {
+            GameData = new GameData();
+        }
+    }
+
+    public void Update()
+    {
+        if( Input.GetKeyDown( KeyCode.S ) )
+        {
+            Persistence.SaveGame( "Butts", GameData );
+        }
+        if( Input.GetKeyDown( KeyCode.L ) )
+        {
+            GameData = Persistence.LoadGame( "Butts" );
+        }
+
+
     }
 
     public void Register( Entity t ) //More generic object
     {
-        Entities.Add( t );
+        GameData.Entities.Add( t );
     }
 
     public void Tick()
     {
-        foreach( Entity t in Entities )
-        {
-            t.Tick();
-        }
+
     }
 }

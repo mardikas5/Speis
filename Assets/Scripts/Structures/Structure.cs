@@ -6,11 +6,14 @@ using System.Linq;
 [System.Serializable]
 public class Structure : Entity
 {
+
+    //dont load this var, set it via station.
     public Station Owner;
 
+    //prefab info
     public List<Connector> Connectors;
     public Collider PlacementCollider;
-    public List<Resource> BuildingCost;
+    public List<Storable> BuildingCost;
 
     [SerializeField]
     public List<StructureBehaviour> StructureBehaviours;
@@ -73,14 +76,16 @@ public class Structure : Entity
             Simulation.Instance.Register( this );
         }
 
+        //maybe too far reaching.
         GetComponentsInChildren<StructureBehaviour>().ToList().ForEach( ( x ) => RegisterBehaviour( x ) );
 
         Connectors = new List<Connector>( transform.GetComponentsInChildren<Connector>() );
 
-        if (Owner == null)
+        if( Owner == null )
         {
             Owner = transform.root.GetComponentInChildren<Station>();
         }
+
         return true;
     }
 

@@ -3,31 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum ItemType
+{
+    Resource,
+    Weapon
+}
+
 [System.Serializable]
-public class ResourceBase : ScriptableObject
+public class PersistentItem : ScriptableObject
 {
     public Sprite sprite;
     public string Name;
     public string DisplayName;
 
-    private ResourceBase() { }
+    public ItemType Type;
 
-    private ResourceBase( string Name ) : this( Name, Name )
+    public int StackSize = 256;
+    public float UnitVolume = 1f;
+
+    private PersistentItem() { }
+
+    private PersistentItem( string Name ) : this( Name, Name )
     {
 
     }
 
-    private ResourceBase( string Name, string DisplayName )
+    private PersistentItem( string Name, string DisplayName )
     {
         this.Name = Name;
         this.DisplayName = DisplayName;
     }
 
-    public static ResourceBase Get( string Name )
+    public static PersistentItem Get( string Name )
     {
         if( ResourceDatabase.Instance != null )
         {
-            ResourceBase match = ResourceDatabase.Instance.Resources.FirstOrDefault( res => res.Name == Name );
+            PersistentItem match = ResourceDatabase.Instance.Resources.FirstOrDefault( res => res.Name == Name );
             if( match != null )
             {
                 return match;
@@ -36,18 +47,18 @@ public class ResourceBase : ScriptableObject
         return null;
     }
 
-    public static ResourceBase CreateOrGet( string Name )
+    public static PersistentItem CreateOrGet( string Name )
     {
         return CreateOrGet( Name, Name );
     }
 
-    public static ResourceBase CreateOrGet( string Name, string DisplayName )
+    public static PersistentItem CreateOrGet( string Name, string DisplayName )
     {
-        ResourceBase existing = Get( Name );
+        PersistentItem existing = Get( Name );
 
         if( existing == null )
         {
-            existing = new ResourceBase( Name, DisplayName );
+            existing = new PersistentItem( Name, DisplayName );
         }
 
         return existing;

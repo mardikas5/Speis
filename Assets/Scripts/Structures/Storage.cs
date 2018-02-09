@@ -7,8 +7,8 @@ using System.Linq;
 public class Storage : StructureBehaviour, ITransactionable
 {
     [SerializeField]
-    private List<Resource> stored;
-    public List<Resource> Stored { get { return stored; } set { stored = value; } }
+    private List<Storable> stored;
+    public List<Storable> Stored { get { return stored; } set { stored = value; } }
 
     public float Volume = 300;
     public float FilledVolume
@@ -40,19 +40,19 @@ public class Storage : StructureBehaviour, ITransactionable
 
         base.Init( structure );
 
-        Stored = new List<Resource>();
+        Stored = new List<Storable>();
     }
 
-    public Resource Get( string Name )
+    public Storable Get( string Name )
     {
         return Get( Name, false );
     }
 
-    public Resource Get( string Name, bool Create = false )
+    public Storable Get( string Name, bool Create = false )
     {
         if( Stored != null )
         {
-            Resource match = Resource.ListHas( Stored, Name );
+            Storable match = Storable.ListHas( Stored, Name );
             if( match != null )
             {
                 return match;
@@ -60,7 +60,7 @@ public class Storage : StructureBehaviour, ITransactionable
         }
         if( Create )
         {
-            Resource created = new Resource( Name );
+            Storable created = new Storable( Name );
             Stored.Add( created );
             return created;
         }
@@ -68,9 +68,9 @@ public class Storage : StructureBehaviour, ITransactionable
     }
 
     //change to return resource incase left over.
-    public Resource Deposit( Resource res )
+    public Storable Deposit( Storable res )
     {
-        Resource inStore = Get( res.Name, res.Amount > 0 );
+        Storable inStore = Get( res.Name, res.Amount > 0 );
         if( res.Amount < 0 )
         {
             return res;
@@ -98,24 +98,24 @@ public class Storage : StructureBehaviour, ITransactionable
 
     public void Deposit( string Name, float Amount )
     {
-        Deposit( new Resource( Name, Amount ) );
+        Deposit( new Storable( Name, Amount ) );
     }
 
-    public Resource Withdraw( Resource res )
+    public Storable Withdraw( Storable res )
     {
         return Withdraw( res.Base.Name, res.Amount );
     }
 
-    public Resource Withdraw( ResourceBase Base, float Amount )
+    public Storable Withdraw( PersistentItem Base, float Amount )
     {
         return Withdraw( Base.Name, Amount );
     }
 
-    public Resource Withdraw( string Name, float Amount )
+    public Storable Withdraw( string Name, float Amount )
     {
-        Resource inStore = Get( Name );
+        Storable inStore = Get( Name );
 
-        Resource outp;
+        Storable outp;
 
         if( inStore == null )
         {
@@ -124,12 +124,12 @@ public class Storage : StructureBehaviour, ITransactionable
 
         if( inStore.Amount <= Amount )
         {
-            outp = new Resource( inStore.Base, Amount );
+            outp = new Storable( inStore.Base, Amount );
             Stored.Remove( inStore );
         }
         else
         {
-            outp = new Resource( inStore.Base, inStore.Amount );
+            outp = new Storable( inStore.Base, inStore.Amount );
         }
 
         inStore.Amount -= outp.Amount;

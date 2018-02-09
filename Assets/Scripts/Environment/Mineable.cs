@@ -1,21 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
 [System.Serializable]
 public class Mineable : Entity
 {
+    public Storable[] Resources;
 
-    [System.Serializable]
-    public class MineableData
-    {
-        public Resource[] Resources;
-
-        public GameObject SpawnOnMined;
-    }
-
-
-    public MineableData Data;
+    public GameObject SpawnOnMined;
 
     public override bool Initialize()
     {
@@ -28,9 +24,9 @@ public class Mineable : Entity
 
     void OnDestroyHandler()
     {
-        foreach( Resource r in Data.Resources )
+        foreach( Storable r in Resources )
         {
-            GameObject MinedPiece = Instantiate( Data.SpawnOnMined, transform.position, Quaternion.identity, null );
+            GameObject MinedPiece = Instantiate( SpawnOnMined, transform.position, Quaternion.identity, null );
             MinedPiece.GetComponent<Pickable>().Data.Resource = r;
         }
     }

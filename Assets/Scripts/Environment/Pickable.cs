@@ -9,7 +9,7 @@ public class Pickable : MonoBehaviour
     [Serializable]
     public class PickableData
     {
-        public Resource Resource;
+        public Storable Resource;
     }
 
     public PickableData Data;

@@ -51,9 +51,9 @@ public class Station : Structure
         return true;
     }
 
-    public bool TryDeposit( List<Resource> resources )
+    public bool TryDeposit( List<Storable> resources )
     {
-        foreach( Resource r in resources )
+        foreach( Storable r in resources )
         {
             if( TryDeposit( r ) )
             {
@@ -63,7 +63,7 @@ public class Station : Structure
         return false;
     }
 
-    public bool TryDeposit( Resource r )
+    public bool TryDeposit( Storable r )
     {
         List<Storage> Storages = PartsOfType<Storage>();
 
