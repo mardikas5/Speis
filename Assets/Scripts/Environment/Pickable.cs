@@ -24,15 +24,15 @@ public class Pickable : MonoBehaviour
         TryPickUp( other );
     }
 
+    //Pick up collision layer should be set too.
     void TryPickUp( Collider other )
     {
-        Actor t = other.transform.root.GetComponentInChildren<Actor>();
-        if( t != null )
+        //Actor t = other.transform.root.GetComponentInChildren<Actor>();
+
+        if ( other.transform.root.GetComponentInChildren<Structure>().TryDeposit( Data.Resource ) )
         {
-            if( t.transform.root.GetComponentInChildren<Station>().TryDeposit( Data.Resource ) )
-            {
-                Destroy( transform.root.gameObject );
-            }
+            Destroy( transform.root.gameObject );
         }
     }
 }
+

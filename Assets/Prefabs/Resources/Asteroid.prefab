@@ -24,8 +24,9 @@ GameObject:
   - component: {fileID: 23344411268671238}
   - component: {fileID: 114413405267747194}
   - component: {fileID: 114477402436794878}
+  - component: {fileID: 114461969147088068}
   m_Layer: 0
-  m_Name: Asteroid (common metals)
+  m_Name: Asteroid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,10 +111,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pos: {x: 0, y: 0, z: 0}
   Name: unNamedEntity
-  GUID: 
+  instanceGUID: 
   Initialized: 0
   Resources: []
-  SpawnOnMined: {fileID: 0}
+  SpawnOnMined: {fileID: 1116193252287660, guid: 9a32842ca51f8e24bb8af1dfc1fba9a7,
+    type: 2}
+--- !u!114 &114461969147088068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1232981032442748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5741c785d29673c44b1c6d0c00a882be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ResourceName: Asteroid
 --- !u!114 &114477402436794878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6232b564d9c2ec447b1bf7c2fe1c9e2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data:
+  data:
+    MaxHitPoints: 100
     HitPoints: 100
     Hardness: 0

@@ -36,6 +36,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4507954108502042}
   - component: {fileID: 114687293062736778}
+  - component: {fileID: 114639730461234156}
+  - component: {fileID: 114827791617889428}
+  - component: {fileID: 114302247859485188}
   m_Layer: 0
   m_Name: Core
   m_TagString: Untagged
@@ -1164,6 +1167,18 @@ MonoBehaviour:
   Owner: {fileID: 0}
   Connected: {fileID: 0}
   ConnectionPoint: {fileID: 4686914875979798}
+--- !u!114 &114302247859485188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1094839491357396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5741c785d29673c44b1c6d0c00a882be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ResourceName: Core
 --- !u!114 &114335623529015114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1192,6 +1207,30 @@ MonoBehaviour:
   Owner: {fileID: 0}
   Connected: {fileID: 0}
   ConnectionPoint: {fileID: 4488293614982158}
+--- !u!114 &114639730461234156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1094839491357396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6811b67f17b6e7949b4b9577b4f403ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Initialized: 0
+  Enabled: 1
+  _name: fatso
+  _structure: {fileID: 114687293062736778}
+  Inputs:
+  - Base: {fileID: 0}
+    Amount: 0
+  - Base: {fileID: 0}
+    Amount: 0
+  Outputs:
+  - Base: {fileID: 0}
+    Amount: 1
+  LastProdMultiplier: 0
 --- !u!114 &114687293062736778
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1205,14 +1244,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pos: {x: 0, y: 0, z: 0}
   Name: unNamedEntity
-  GUID: 
+  instanceGUID: 
   Initialized: 0
-  Owner: {fileID: 0}
+  Owner: {fileID: 114687293062736778}
   Connectors: []
   PlacementCollider: {fileID: 65896300951409536}
   BuildingCost: []
-  StructureBehaviours: []
+  StructureBehaviours:
+  - {fileID: 114639730461234156}
+  - {fileID: 114827791617889428}
   Parts: []
+--- !u!114 &114827791617889428
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1094839491357396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83697966a7c127c46bc4116d585b02a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Initialized: 0
+  Enabled: 1
+  _name: Storage
+  _structure: {fileID: 114687293062736778}
+  stored: []
+  Volume: 300
 --- !u!114 &114900522416949944
 MonoBehaviour:
   m_ObjectHideFlags: 1

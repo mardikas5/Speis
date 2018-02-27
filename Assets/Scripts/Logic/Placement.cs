@@ -15,7 +15,7 @@ public class PlacementObj
     {
         Placement = p;
         LayermaskValues = new Dictionary<Transform, int>();
-        foreach( Collider t in p.gameObject.GetComponentsInChildren<Collider>().ToList() )
+        foreach ( Collider t in p.gameObject.GetComponentsInChildren<Collider>().ToList() )
         {
             LayermaskValues.Add( t.transform, t.gameObject.layer );
         }
@@ -28,7 +28,7 @@ public class PlacementObj
 
     public void Restore()
     {
-        foreach( KeyValuePair<Transform, int> t in LayermaskValues )
+        foreach ( KeyValuePair<Transform, int> t in LayermaskValues )
         {
             t.Key.gameObject.layer = t.Value;
         }
@@ -43,11 +43,16 @@ public class Placement : Singleton<Placement>
     {
         public KeyCode startPlacementKey = KeyCode.R;
         public KeyCode swapPortKey = KeyCode.H;
+        public KeyCode rotatePlacementKeyX = KeyCode.T;
+        public KeyCode rotatePlacementKeyY = KeyCode.Y;
+        public KeyCode rotatePlacementKeyZ = KeyCode.U;
         public KeyCode finalizeConnectionKey = KeyCode.J;
         public KeyCode endPlacementKey = KeyCode.Escape;
 
+
         public Func<bool> startPlacement;
         public Func<bool> swapPort;
+        public Func<Vector3> rotatePlacement;
         public Func<bool> finalizeConnection;
         public Func<bool> endPlacement;
 
@@ -55,6 +60,7 @@ public class Placement : Singleton<Placement>
         {
             startPlacement = () => isKeyDown( startPlacementKey );
             swapPort = () => isKeyDown( swapPortKey );
+            rotatePlacement = new Func<Vector3>( RotationHandler );
             finalizeConnection = () => isKeyDown( finalizeConnectionKey );
             endPlacement = () => isKeyDown( endPlacementKey );
         }
@@ -63,6 +69,29 @@ public class Placement : Singleton<Placement>
         {
             return Input.GetKeyDown( k );
         }
+
+        private Vector3 RotationHandler()
+        {
+            float x = 0;
+            float y = 0;
+            float z = 0;
+
+            if ( isKeyDown( rotatePlacementKeyX ) )
+            {
+                x = 90f;
+            }
+            if ( isKeyDown( rotatePlacementKeyY ) )
+            {
+                y = 90f;
+            }
+            if ( isKeyDown( rotatePlacementKeyZ ) )
+            {
+                z = 90f;
+            }
+
+            return new Vector3( x, y, z );
+        }
+
     }
 
     [SerializeField]
@@ -104,28 +133,41 @@ public class Placement : Singleton<Placement>
     {
         placementActive = PlacementCoroutine != null;
 
-        if( inputHandler.startPlacement() )
+        RotatePlacementHandler( inputHandler.rotatePlacement() );
+
+        if ( inputHandler.startPlacement() )
         {
             StartPlacementHandler();
         }
-        if( inputHandler.endPlacement() )
+        if ( inputHandler.endPlacement() )
         {
             BreakPlacement();
         }
     }
 
-    private void StartPlacementHandler()
+    private void RotatePlacementHandler( Vector3 rotate )
     {
-        if( pObj == null )
+        if ( pObj == null || pObj.Placement == null )
         {
             return;
         }
-        if( pObj.Placement == null )
+
+        pObj.Placement.transform.eulerAngles += rotate;
+    }
+
+    private void StartPlacementHandler()
+    {
+        if ( pObj == null )
+        {
+            return;
+        }
+
+        if ( pObj.Placement == null )
         {
             SetPlacing( testObject );
         }
 
-        if( PlacementCoroutine == null && pObj != null )
+        if ( PlacementCoroutine == null && pObj != null )
         {
             Debug.Log( "Placing" );
             PlacementCoroutine = StartCoroutine( TryConnectRoutine( 5f, pObj, () => { PlacementCoroutine = null; pObj = null; } ) );
@@ -137,14 +179,14 @@ public class Placement : Singleton<Placement>
         Collider[] hitColliders = Physics.OverlapSphere( pos, radius, layerMask );
         Collider ClosestCollider = null;
 
-        if( hitColliders.Length > 0 )
+        if ( hitColliders.Length > 0 )
         {
             ClosestCollider = hitColliders[0];
         }
 
-        for( int i = 0; i < hitColliders.Length; i++ )
+        for ( int i = 0; i < hitColliders.Length; i++ )
         {
-            if( ( pos - hitColliders[i].transform.position ).sqrMagnitude < ( pos - ClosestCollider.transform.position ).sqrMagnitude )
+            if ( ( pos - hitColliders[i].transform.position ).sqrMagnitude < ( pos - ClosestCollider.transform.position ).sqrMagnitude )
             {
                 ClosestCollider = hitColliders[i];
             }
@@ -156,7 +198,7 @@ public class Placement : Singleton<Placement>
 
     public ConnectorEnd GetConnectorAtScreenPoint( Vector2 Pos, float distance )
     {
-        if( placementCam == null )
+        if ( placementCam == null )
         {
             return null;
         }
@@ -164,7 +206,7 @@ public class Placement : Singleton<Placement>
         Ray r = placementCam.ScreenPointToRay( Pos );
         RaycastHit t;
 
-        if( !Physics.Raycast( r, out t ) )
+        if ( !Physics.Raycast( r, out t ) )
         {
             return null;
         }
@@ -172,7 +214,7 @@ public class Placement : Singleton<Placement>
         Collider ClosestConnector = GetClosestCollider( t.point, distance, Const.ConnectionLayerMask );
         //get the collider or connector the player is trying to connect to.
 
-        if( ClosestConnector == null )
+        if ( ClosestConnector == null )
         {
             return null;
         }
@@ -180,7 +222,7 @@ public class Placement : Singleton<Placement>
         return ClosestConnector.GetComponent<ConnectorEnd>();
     }
 
-
+    //remove this coroutine crap
     public IEnumerator TryConnectRoutine( float distance, PlacementObj placing, Action onCompleted = null )
     {
         //ConnectorEnd ConnectToStation = null;
@@ -188,7 +230,7 @@ public class Placement : Singleton<Placement>
         ConnectorEnd StationEnd = GetConnectorAtScreenPoint( Input.mousePosition, distance );
         int partIndex = -1;
 
-        if( StationEnd == null || placing.Placement == null )
+        if ( StationEnd == null || placing.Placement == null )
         {
             yield break;
         }
@@ -197,9 +239,9 @@ public class Placement : Singleton<Placement>
 
         PartEnd = Candidates[0];
 
-        for( int i = 0; i < Candidates.Count; i++ )
+        for ( int i = 0; i < Candidates.Count; i++ )
         {
-            if( !TryPlaceTogether( StationEnd, Candidates[i], placing.Placement ) )
+            if ( !TryPlaceTogether( StationEnd, Candidates[i], placing.Placement ) )
             {
                 Candidates.RemoveAt( i );
                 i--;
@@ -207,13 +249,13 @@ public class Placement : Singleton<Placement>
         }
 
         //get the closest connector that is able to connect.
-        while( Candidates.Count > 0 && pObj != null && pObj.Placement != null )
+        while ( Candidates.Count > 0 && pObj != null && pObj.Placement != null )
         {
-            if( inputHandler.swapPort() )
+            if ( inputHandler.swapPort() )
             {
                 partIndex++;
 
-                if( partIndex >= Candidates.Count )
+                if ( partIndex >= Candidates.Count )
                 {
                     partIndex = 0;
                 }
@@ -223,9 +265,9 @@ public class Placement : Singleton<Placement>
                 TryPlaceTogether( StationEnd, PartEnd, placing.Placement );
             }
 
-            if( inputHandler.finalizeConnection() )
+            if ( inputHandler.finalizeConnection() )
             {
-                if( FinalizeConnection( StationEnd.connector, PartEnd.connector, placing ) != null )
+                if ( FinalizeConnection( StationEnd.connector, PartEnd.connector, placing ) != null )
                 {
                     break;
                 }
@@ -234,13 +276,13 @@ public class Placement : Singleton<Placement>
             yield return null;
         }
 
-        if( Candidates.Count == 0 )
+        if ( Candidates.Count == 0 )
         {
             Debug.Log( "Couldn't find suitable candidate" );
             BreakPlacement();
         }
 
-        if( onCompleted != null )
+        if ( onCompleted != null )
         {
             onCompleted();
         }
@@ -249,14 +291,14 @@ public class Placement : Singleton<Placement>
     //Call finalizePlacement?
     public GameObject FinalizeConnection( Connector StationEnd, Connector PartEnd, PlacementObj placing )
     {
-        if( placing == null )
+        if ( placing == null )
         {
             return null;
         }
 
         StationEnd.Connect( PartEnd );
 
-        if( BuildingPlaced != null )
+        if ( BuildingPlaced != null )
         {
             BuildingPlaced( placing.Placement );
         }
@@ -268,7 +310,7 @@ public class Placement : Singleton<Placement>
 
     public void BreakPlacement()
     {
-        if( pObj == null )
+        if ( pObj == null )
         {
             return;
         }
@@ -301,9 +343,9 @@ public class Placement : Singleton<Placement>
         List<Collider> inCol = Physics.OverlapBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, ~1 << 1, QueryTriggerInteraction.Ignore ).ToList();
         ExtDebug.DrawBoxCastBox( checkPlacement.bounds.center, checkPlacement.bounds.extents, Quaternion.identity, Vector3.zero, 0f, Color.red );
 
-        for( int i = 0; i < inCol.Count; )
+        for ( int i = 0; i < inCol.Count; )
         {
-            if( inCol[i].transform.root == Placing.transform )
+            if ( inCol[i].transform.root == Placing.transform )
             {
                 inCol.RemoveAt( i );
                 continue;
@@ -312,7 +354,7 @@ public class Placement : Singleton<Placement>
             i++;
         }
 
-        if( inCol.Count > 0 )
+        if ( inCol.Count > 0 )
         {
             return false;
         }

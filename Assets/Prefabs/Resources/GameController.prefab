@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114947624567056436}
   - component: {fileID: 114621378218917972}
   - component: {fileID: 114127660981077030}
+  - component: {fileID: 114944548702103310}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -56,9 +57,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94539d62070c9104aa5f0029306d6b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
+  Initialized: 1
   InitAttachedBehaviours: 1
   InitAllSingletonsInScene: 1
+  InitEntitiesInScene: 1
+  IsSceneReady: 0
   InitializeAtStart: []
 --- !u!114 &114336792905833418
 MonoBehaviour:
@@ -71,8 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb1c58782272bec43a4c384375a697cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
-  p: {fileID: 0}
+  Initialized: 1
+  PauseInteractable: 1
   TicksPerSecond: 5
 --- !u!114 &114425453993999412
 MonoBehaviour:
@@ -85,9 +88,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f15a7572e4c84c438f0181d32e2787b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
+  Initialized: 1
   GameData:
     Entities: []
+    DestroyedEntities: []
 --- !u!114 &114621378218917972
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -99,8 +103,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bc5d08fe92030e45bd6c41ea3b6af4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
+  Initialized: 1
   Structures: []
+--- !u!114 &114944548702103310
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1117540267762856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e127c8debcf5f4eb7e9a946ff4ebba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Initialized: 1
+  LoadScene: {fileID: 102900000, guid: f94b085f495bac44097240fc0a1b2eb2, type: 3}
+  ScenePathFolder: Assets/Scenes/
 --- !u!114 &114947624567056436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -112,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a0e2377aea2ea4eb0a6bf7827e9d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
+  Initialized: 1
   Resources: []
 --- !u!114 &114956131383453984
 MonoBehaviour:
@@ -125,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb01cbf874d29542865f5500096fc45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
+  Initialized: 1
   inputHandler:
     startPlacementKey: 114
     swapPortKey: 104

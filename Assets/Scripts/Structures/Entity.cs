@@ -2,87 +2,167 @@ using System;
 using UnityEngine;
 using System.Linq;
 using ProtoBuf;
+using System.Collections.Generic;
 
+[System.Serializable,
+    RequireComponent( typeof( TrackedPrefab ) )]
 
-
-[System.Serializable, ProtoContract]
-public class Entity : MonoBehaviour
+public partial class Entity : ProtoMono
 {
-    [ProtoContract]
-    public class Surrogate
+    [Serializable, ProtoContract,
+        ProtoInclude( 1100, typeof( Structure.Surrogate ) ),
+        ProtoInclude( 1101, typeof( Mineable.Surrogate ) )]
+    public class Surrogate : ProtoBase
     {
+        public Entity referenceEntity;
+
         [ProtoMember( 1 )]
         public Vector3 pos;
 
         [ProtoMember( 2 )]
-        public string name;
+        public string PrefabLoadName;
 
         [ProtoMember( 3 )]
-        public string instanceGUID;
+        public string EntityName;
 
         [ProtoMember( 4 )]
-        public string prefabGUID;
+        public List<string> DebugLines;
 
-        public static implicit operator Entity( Surrogate data )
+
+        public Surrogate()
         {
-            if( data == null ) { return null; }
-            //null checks.
-            return Simulation.Instance.GameData.Entities.Find( ( x ) => x.instanceGUID == data.instanceGUID );
+
         }
 
-        public static implicit operator Entity.Surrogate( Entity data )
+        public Surrogate( Entity t )
         {
-            if( data == null ) { return null; }
+            referenceEntity = t;
 
-            Surrogate s = new Surrogate();
-            s.pos = data.pos;
-            s.name = data.name;
-            s.instanceGUID = data.instanceGUID;
-            s.prefabGUID = data.prefabGUID;
+            Save();
+        }
 
-            return s;
+
+        public override void Save()
+        {
+            base.Save();
+
+            Entity data = referenceEntity;
+
+            if ( data == null )
+            {
+                return;
+            }
+
+            pos = data.gameObject.transform.position;
+            PrefabLoadName = data.GetComponent<TrackedPrefab>().ResourceName;
+            EntityName = data.name;
+            instanceGUID = data.instanceGUID;
+            StringDebugType.Add( "Entity" );
+        }
+
+
+        public override void Load( object dataObj )
+        {
+            base.Load( dataObj );
+
+            DebugLines = new List<string>();
+
+            if ( !Simulation.Instance.FindEntityInScene<Entity>( ( (Surrogate)dataObj ).instanceGUID ) )
+            {
+                SpawnEntityFromSurrogate( (Surrogate)dataObj );
+            }
+        }
+
+
+        public virtual GameObject SpawnEntityFromSurrogate( Surrogate data )
+        {
+            GameObject obj = Resources.Load( PrefabLoadName ) as GameObject;
+
+            if ( obj == null )
+            {
+                return null;
+            }
+
+            GameObject self = Instantiate( obj, pos, Quaternion.identity, null );
+
+            self.GetComponent<Entity>().instanceGUID = data.instanceGUID;
+
+            referenceEntity = self.GetComponent<Entity>();
+
+            return self;
+        }
+
+
+        public void addDebug( string s )
+        {
+            if ( DebugLines == null )
+            {
+                DebugLines = new List<string>();
+            }
+
+            DebugLines.Add( s );
         }
     }
 
-    [ProtoMember( 1 )]
+
+
+
     public Vector3 pos = Vector3.zero;
 
-    [ProtoMember( 2 )]
     public string Name = "unNamedEntity";
 
-    [ProtoMember( 3 )]
     public string instanceGUID;
 
-    [ProtoMember( 4 )]
-    public string prefabGUID;
+    private bool Destroyed = false;
+
 
     [Tooltip( "Is object initialized, use as readonly" )]
     public bool Initialized = false;
 
 
+    public event Action OnDestroyed;
+
+
     public virtual bool Initialize()
     {
-        if( Initialized == true )
+        if ( Initialized == true )
         {
             Debug.Log( "Tried to initialize already inited entity" );
             return false;
         }
 
-        if( string.IsNullOrEmpty( instanceGUID.ToString() ) )
+        if ( string.IsNullOrEmpty( instanceGUID.ToString() ) )
         {
             instanceGUID = Guid.NewGuid().ToString();
         }
 
-        Simulation.Instance.Register( this );
-        d
-
         Initialized = true;
 
+        SaveObject();
+
         return true;
+    }
+
+    public virtual void SaveObject()
+    {
+        Simulation.Instance.Register( SaveObject<Surrogate>() );
     }
 
     public virtual void Tick()
     {
 
+    }
+
+    public override T SaveObject<T>()
+    {
+        return new Surrogate( this ) as T;
+    }
+
+    public void OnDestroy()
+    {
+        if ( OnDestroyed != null )
+        {
+            OnDestroyed();
+        }
     }
 }

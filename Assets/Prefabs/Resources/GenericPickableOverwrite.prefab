@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 23819010041966408}
   - component: {fileID: 114932576370075728}
   m_Layer: 10
-  m_Name: Pickable
+  m_Name: GenericPickableOverwrite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -24,7 +24,7 @@ namespace ActorUtils
 
         protected override IEnumerator CommandInner()
         {
-            Movement runBehaviour = Owner.actor.GetComponent<Movement>();
+            Movement runBehaviour = Owner.actor.ActiveMovement;
 
             while( !runBehaviour.hasReachedTarget( Position ) )
             {

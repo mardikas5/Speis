@@ -2,34 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ProtoBuf;
 
-[System.Serializable]
+[Serializable]
 public class Station : Structure
 {
+    [SerializeField]
     public List<Structure> Parts;
 
-    public List<T> PartsOfType<T>() where T : StructureBehaviour
+    public override List<T> PartBehavioursOfType<T>()
     {
         List<T> returnValues = new List<T>();
 
-        for( int i = 0; i < Parts.Count; i++ )
+        for ( int i = 0; i < Parts.Count; i++ )
         {
-            if( Parts[i].StructureBehaviours == null )
-            {
-                continue;
-            }
+            List<T> behaviours = Parts[i].PartBehavioursOfType<T>();
 
-            for( int k = 0; k < Parts[i].StructureBehaviours.Count; k++ )
+            if (behaviours != null)
             {
-                if( Parts[i].StructureBehaviours[k] == null )
-                {
-                    continue;
-                }
-
-                if( Parts[i].StructureBehaviours[k].GetType() == typeof( T ) )
-                {
-                    returnValues.Add( (T)Parts[i].StructureBehaviours[k] );
-                }
+                returnValues.AddRange( behaviours );
             }
         }
 
@@ -39,23 +30,22 @@ public class Station : Structure
 
     public override bool Initialize()
     {
-
-        if( !base.Initialize() )
+        if ( !base.Initialize() )
         {
             return false;
         }
 
         Owner = this;
         Parts = new List<Structure>() { this };
-        //Parts.Add( this );
+
         return true;
     }
 
     public bool TryDeposit( List<Storable> resources )
     {
-        foreach( Storable r in resources )
+        foreach ( Storable r in resources )
         {
-            if( TryDeposit( r ) )
+            if ( TryDeposit( r ) )
             {
                 return true;
             }
@@ -63,14 +53,19 @@ public class Station : Structure
         return false;
     }
 
-    public bool TryDeposit( Storable r )
+    /// <summary>
+    /// Tries to deposit a storable object in storage
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns>True on success/returns>
+    public override bool TryDeposit( Storable r )
     {
-        List<Storage> Storages = PartsOfType<Storage>();
+        List<Storage> Storages = PartBehavioursOfType<Storage>();
 
-        for( int i = 0; i < Storages.Count; i++ )
+        for ( int i = 0; i < Storages.Count; i++ )
         {
             r = Storages[i].Deposit( r );
-            if( r.Amount == 0f ) // less than too?
+            if ( r.Amount == 0f ) // less than too?
             {
                 return true;
             }
@@ -80,12 +75,12 @@ public class Station : Structure
 
     public void Register( Structure structure )
     {
-        if( Parts.FirstOrDefault( res => res == structure ) != null )
+        if ( Parts.FirstOrDefault( res => res == structure ) != null )
         {
             return;
         }
 
-        if( !structure.Initialized )
+        if ( !structure.Initialized )
         {
             structure.Initialize();
         }

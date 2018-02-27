@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,20 +7,26 @@ using ProtoBuf;
 [Serializable, ProtoContract]
 public class GameData
 {
+    //Live entities
     [ProtoMember( 1 )]
-    public List<Entity> Entities;
+    public List<ProtoBase> ProtoBaseObjects;
+
+    //Historical / optimization purposes
+    [ProtoMember( 2 )]
+    public List<Entity.Surrogate> DestroyedEntities;
 
     public GameData()
     {
-        Entities = new List<Entity>();
+        ProtoBaseObjects = new List<ProtoBase>();
+
+        DestroyedEntities = new List<Entity.Surrogate>();
     }
 
     public void LoadIntoScene()
     {
-        foreach( Entity t in Entities )
+        foreach ( ProtoBase t in ProtoBaseObjects )
         {
-            GameObject p = Resources.Load("Core") as GameObject;
-            
+            t.Load( t );
         }
     }
 }

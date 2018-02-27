@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 23903513048890700}
   - component: {fileID: 114688247851268076}
   - component: {fileID: 114423934147538158}
+  - component: {fileID: 114668188214130516}
   m_Layer: 0
   m_Name: TurretBoio
   m_TagString: Untagged
@@ -200,6 +201,18 @@ MonoBehaviour:
   WeaponFX: {fileID: 0}
   Projectile: {fileID: 0}
   WeaponForward: {fileID: 4574129402194622}
+--- !u!114 &114668188214130516
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1475306866561524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5741c785d29673c44b1c6d0c00a882be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ResourceName: BasicAI\TurretBoio
 --- !u!114 &114688247851268076
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,7 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pos: {x: 0, y: 0, z: 0}
   Name: unNamedEntity
-  GUID: 
+  instanceGUID: 
   Initialized: 0
   Owner: {fileID: 0}
   Connectors: []

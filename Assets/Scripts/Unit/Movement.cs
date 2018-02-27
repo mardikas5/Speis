@@ -48,7 +48,7 @@ namespace ActorUtils
         /// <param name="Point"></param>
         /// <param name="stopAtTarget"></param>
         /// <returns> time it will take to get to point.</returns>
-        public virtual float MoveToPoint( Vector3 Point, bool stopAtTarget = true )
+        public virtual float MoveToPoint( Vector3 Point, bool AxisEqualArrivalTime = true, bool stopAtTarget = true )
         {
             MovementTarget = Point;
             Rigidbody rb = actor.GetComponent<Rigidbody>();
@@ -69,9 +69,9 @@ namespace ActorUtils
             //Normalized difference between current velocity and required velocity.
             BoostTowards = Vector3.zero;// = NeededDir.normalized - CurrentDir.normalized;
 
-            for( int i = 0; i < 3; i++ )
+            for ( int i = 0; i < 3; i++ )
             {
-                if( NeededDir[i] > 0f )
+                if ( NeededDir[i] > 0f )
                 {
                     BoostTowards[i] = 1f;
                 }
@@ -85,27 +85,42 @@ namespace ActorUtils
             //Difference between accelerating and stopping at point = 2 : 1.41, i.e 1.42x longer to stop at point.
             //Final time to target location.
             float longestTimeToAxisTarget = 0f;
+            int longestTimeIndex = -1;
 
-            //Calculate longest time to target to get final time to target.
-            for( int i = 0; i < 3; i++ )
+            for ( int i = 0; i < 3; i++ )
             {
-                BoostTowards[i] *= Acceleration[i] * Time.fixedDeltaTime;
-                SlowDown[i] = 0f;
-
-                if( TimeToTarget[i] > longestTimeToAxisTarget )
+                if ( TimeToTarget[i] > longestTimeToAxisTarget )
                 {
                     longestTimeToAxisTarget = TimeToTarget[i];
+                    longestTimeIndex = i;
+
+                    if ( stopAtTarget )
+                    {
+                        longestTimeToAxisTarget *= 1.42f;
+                    }
+                }
+            }
+            //Calculate longest time to target to get final time to target.
+            for ( int i = 0; i < 3; i++ )
+            {
+                BoostTowards[i] *= Acceleration[i] * Time.fixedDeltaTime;
+
+                if ( AxisEqualArrivalTime )
+                {
+                    float equalize = ( TimeToTarget[i] / TimeToTarget[longestTimeIndex] );
+                    BoostTowards[i] *= equalize;
                 }
 
-                if( stopAtTarget )
-                {
-                    longestTimeToAxisTarget *= 1.42f;
+                SlowDown[i] = 0f;
 
-                    if( !BoostTowards[i].signMatches( rb.velocity[i] ) )
+                if ( stopAtTarget )
+                {
+                    if ( !BoostTowards[i].signMatches( rb.velocity[i] ) )
                     {
                         continue;
                     }
-                    if( TimeToTarget[i] < ( Mathf.Abs( rb.velocity[i] ) / Mathf.Abs( Acceleration[i] ) ) )
+
+                    if ( TimeToTarget[i] < ( Mathf.Abs( rb.velocity[i] * Time.fixedDeltaTime ) / Mathf.Abs( BoostTowards[i] ) ) )
                     {
                         //slow down
                         SlowDown[i] = 1f;
@@ -123,11 +138,13 @@ namespace ActorUtils
             return longestTimeToAxisTarget;
         }
 
+
+
         public Vector3 TimeToPoint( Vector3 displacement, Vector3 initVelocity, Vector3 Acceleration )
         {
-            for( int i = 0; i < 3; i++ )
+            for ( int i = 0; i < 3; i++ )
             {
-                if( initVelocity[i].signMatches( displacement[i] ) )
+                if ( initVelocity[i].signMatches( displacement[i] ) )
                 {
                     initVelocity[i] = Mathf.Abs( initVelocity[i] );
                 }
@@ -145,7 +162,7 @@ namespace ActorUtils
         public float TimeToPoint( float s, float u, float a )
         {
             //quadratic 
-            if( s < 0 )
+            if ( s < 0 )
             {
                 s *= -1;
             }
@@ -158,9 +175,9 @@ namespace ActorUtils
 
             float[] times = quadForm( a1, b1, c1 );
 
-            if( !float.IsNaN( times[0] ) )
+            if ( !float.IsNaN( times[0] ) )
             {
-                if( times[0] > 0 )
+                if ( times[0] > 0 )
                 {
                     return times[0];
                 }
@@ -178,7 +195,7 @@ namespace ActorUtils
         {
             float preRoot = b * b - 4f * a * c;
 
-            if( preRoot < 0f )
+            if ( preRoot < 0f )
             {
                 return new float[] { float.NaN };
             }

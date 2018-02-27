@@ -19,16 +19,15 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4955025509746110}
-  - component: {fileID: 114717084203625142}
   - component: {fileID: 33011642779262408}
   - component: {fileID: 65322382084017558}
   - component: {fileID: 23154803797683230}
   - component: {fileID: 54268035093994318}
-  - component: {fileID: 114076206748616108}
-  - component: {fileID: 114548344791292080}
-  - component: {fileID: 114216376328048398}
-  - component: {fileID: 114213366991108884}
-  - component: {fileID: 114565435960893312}
+  - component: {fileID: 114003786597406472}
+  - component: {fileID: 114347430849947852}
+  - component: {fileID: 114176257817926774}
+  - component: {fileID: 114990141908353738}
+  - component: {fileID: 114178707588468028}
   m_Layer: 11
   m_Name: BasicAI
   m_TagString: Untagged
@@ -117,7 +116,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114076206748616108
+--- !u!114 &114003786597406472
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -125,87 +124,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1494978495974592}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0ee7c30753633c4d94f4938ad420cad, type: 3}
+  m_Script: {fileID: 11500000, guid: 5741c785d29673c44b1c6d0c00a882be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Initialized: 0
-  pos: {x: 0, y: 0, z: 0}
-  Name: unNamedEntity
-  GUID: 
-  Elements: []
-  InteractionDistance: 0.5
-  isActive: 1
---- !u!114 &114213366991108884
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1494978495974592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c14e6aa95d4678d4bb0021b1326e6c75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Initialized: 0
-  pos: {x: 0, y: 0, z: 0}
-  Name: unNamedEntity
-  GUID: 
-  Owner: {fileID: 0}
-  Connectors: []
-  PlacementCollider: {fileID: 0}
-  BuildingCost: []
-  StructureBehaviours: []
---- !u!114 &114216376328048398
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1494978495974592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afda2a71e0dbffb4d98733c601cbd070, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Initialized: 0
-  pos: {x: 0, y: 0, z: 0}
-  Name: unNamedEntity
-  GUID: 
-  Owner: {fileID: 0}
-  Connectors: []
-  PlacementCollider: {fileID: 0}
-  BuildingCost: []
-  StructureBehaviours: []
-  Parts: []
---- !u!114 &114548344791292080
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1494978495974592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8dbf3e87a3f1543bdf7d2b676235f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  actor: {fileID: 114076206748616108}
---- !u!114 &114565435960893312
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1494978495974592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83697966a7c127c46bc4116d585b02a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Initialized: 0
-  Enabled: 1
-  _name: Storage
-  _structure: {fileID: 0}
-  stored: []
-  Volume: 300
---- !u!114 &114717084203625142
+  ResourceName: BasicAI\BasicAI
+--- !u!114 &114176257817926774
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -216,11 +139,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d4f77af0c177a4fb52ebcda56b502a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actor: {fileID: 0}
+  actor: {fileID: 114347430849947852}
   MovementTarget: {x: 0, y: 0, z: 0}
   BoostTowards: {x: 0, y: 0, z: 0}
   SlowDown: {x: 0, y: 0, z: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   TimeToTarget: {x: 0, y: 0, z: 0}
   NeededDir: {x: 0, y: 0, z: 0}
-  speed: 15
+  speed: 2
+--- !u!114 &114178707588468028
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1494978495974592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c14e6aa95d4678d4bb0021b1326e6c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pos: {x: 0, y: 0, z: 0}
+  Name: unNamedEntity
+  instanceGUID: 
+  Initialized: 0
+  Owner: {fileID: 0}
+  Connectors: []
+  PlacementCollider: {fileID: 0}
+  BuildingCost: []
+  StructureBehaviours: []
+--- !u!114 &114347430849947852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1494978495974592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ee7c30753633c4d94f4938ad420cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Elements: []
+  ActiveMovement: {fileID: 114176257817926774}
+  InteractionDistance: 0.5
+  isActive: 1
+--- !u!114 &114990141908353738
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1494978495974592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8dbf3e87a3f1543bdf7d2b676235f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actor: {fileID: 114347430849947852}

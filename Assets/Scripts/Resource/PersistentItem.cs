@@ -1,7 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ProtoBuf;
 
 public enum ItemType
 {
@@ -36,15 +37,16 @@ public class PersistentItem : ScriptableObject
 
     public static PersistentItem Get( string Name )
     {
-        if( ResourceDatabase.Instance != null )
+        if ( ResourceDatabase.Instance != null )
         {
             PersistentItem match = ResourceDatabase.Instance.Resources.FirstOrDefault( res => res.Name == Name );
-            if( match != null )
+            if ( match != null )
             {
                 return match;
             }
         }
-        return null;
+
+        return Resources.Load( Persistence.ResourceObjectPath + Name ) as PersistentItem;
     }
 
     public static PersistentItem CreateOrGet( string Name )
@@ -56,7 +58,7 @@ public class PersistentItem : ScriptableObject
     {
         PersistentItem existing = Get( Name );
 
-        if( existing == null )
+        if ( existing == null )
         {
             existing = new PersistentItem( Name, DisplayName );
         }

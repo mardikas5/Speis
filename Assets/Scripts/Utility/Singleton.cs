@@ -15,7 +15,6 @@ public class Singleton<T> : SingletonBase where T : class
     {
         if( _instance != null )
         {
-            //Console.WriteLine( "Instance already exists" );
             return;
         }
         _instance = this as T;

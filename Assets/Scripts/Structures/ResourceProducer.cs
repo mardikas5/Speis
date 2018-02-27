@@ -6,6 +6,31 @@ using UnityEngine;
 [System.Serializable]
 public class ResourceProducer : StructureBehaviour
 {
+    public new class Surrogate : StructureBehaviour.Surrogate
+    {
+        public Surrogate()
+        {
+
+        }
+
+        public Surrogate( StructureBehaviour t ) : base( t )
+        {
+
+        }
+
+        public override StructureBehaviour AddSelf( Entity parent )
+        {
+            reference = parent.gameObject.AddComponent<ResourceProducer>();
+
+            return reference;
+        }
+
+        public override string debugString()
+        {
+            return "resource producer 123";
+        }
+    }
+
     public List<Storable> Inputs;
     public List<Storable> Outputs;
     public float LastProdMultiplier = 0f;
@@ -13,7 +38,7 @@ public class ResourceProducer : StructureBehaviour
     public override void Tick()
     {
         base.Tick();
-        if( Enabled )
+        if ( Enabled )
         {
             Produce();
         }
@@ -21,26 +46,28 @@ public class ResourceProducer : StructureBehaviour
 
     public void Produce()
     {
-        if( Structure.Owner == null )
+        if ( Structure.Owner == null )
         {
             return;
         }
-        List<Storage> Storages = Structure.Owner.PartsOfType<Storage>();
+
+        List<Storage> Storages = Structure.Owner.PartBehavioursOfType<Storage>();
 
         List<Storable> resources = new List<Storable>();
 
-        for( int i = 0; i < Storages.Count; i++ )
+        for ( int i = 0; i < Storages.Count; i++ )
         {
             resources.AddRange( Storages[i].Stored );
         }
+
 
         float productionMultiplier = Storable.SmallestNormalizedAvailable( Inputs, resources );
 
         List<Storable> produced = new List<Storable>();
 
-        for( int i = 0; i < Inputs.Count; i++ )
+        for ( int i = 0; i < Inputs.Count; i++ )
         {
-            if( Inputs[i] == null || Inputs[i].Base == null )
+            if ( Inputs[i] == null || Inputs[i].Base == null )
             {
                 continue;
             }
@@ -48,9 +75,9 @@ public class ResourceProducer : StructureBehaviour
 
             List<Storable> StoredNeededResource = resources.Where( x => x.Base == Inputs[i].Base ).ToList();
 
-            for( int k = 0; k < StoredNeededResource.Count; k++ )
+            for ( int k = 0; k < StoredNeededResource.Count; k++ )
             {
-                if( StoredNeededResource[k].Amount > AmountLeft )
+                if ( StoredNeededResource[k].Amount > AmountLeft )
                 {
                     StoredNeededResource[k].Amount -= AmountLeft;
                     AmountLeft = 0;
@@ -60,7 +87,7 @@ public class ResourceProducer : StructureBehaviour
                 StoredNeededResource[k].Amount = 0;
             }
 
-            if( AmountLeft > 0 )
+            if ( AmountLeft > 0 )
             {
                 Debug.Log( "Amounts not matching, ResourceProducer debug" );
             }
@@ -68,7 +95,7 @@ public class ResourceProducer : StructureBehaviour
 
         LastProdMultiplier = productionMultiplier;
 
-        for( int i = 0; i < Outputs.Count; i++ )
+        for ( int i = 0; i < Outputs.Count; i++ )
         {
             produced.Add( Outputs[i].Copy( Outputs[i].Amount * productionMultiplier ) );
         }
@@ -76,5 +103,10 @@ public class ResourceProducer : StructureBehaviour
         //MyDebug.DebugWrite( "Produced: " + produced.Count );
 
         Structure.Owner.TryDeposit( produced );
+    }
+
+    public override T SaveObject<T>()
+    {
+        return new Surrogate( this ) as T;
     }
 }

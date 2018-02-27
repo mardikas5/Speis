@@ -7,14 +7,16 @@ using UnityEngine;
 public class Health : MonoBehaviour
 {
     [Serializable]
-    public class HealthData
+    public class Data
     {
+        public float MaxHitPoints = 100f;
+
         public float HitPoints = 100f;
 
         public float Hardness;
     }
 
-    public HealthData Data;
+    public Data data;
 
     public Action onDestroyed;
 
@@ -26,8 +28,8 @@ public class Health : MonoBehaviour
 
     public void GetHit( float Damage )
     {
-        Data.HitPoints -= Damage;
-        if( Data.HitPoints <= 0f )
+        data.HitPoints -= Damage;
+        if( data.HitPoints <= 0f )
         {
             Dead();
         }

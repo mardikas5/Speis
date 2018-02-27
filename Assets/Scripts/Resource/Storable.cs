@@ -3,10 +3,69 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ProtoBuf;
 
 [System.Serializable]
 public class Storable
 {
+    [ProtoContract]
+    public class Surrogate : ProtoBase
+    {
+        public Storable referenceStorable;
+
+        [ProtoMember( 1 )]
+        string BaseItemString; //persistent item string.
+
+        [ProtoMember( 2 )]
+        float amount;
+
+        public Surrogate()
+        {
+
+        }
+
+        public Surrogate( Storable t )
+        {
+            referenceStorable = t;
+
+            Save();
+        }
+
+        public override void Save()
+        {
+            base.Save();
+
+            if ( referenceStorable == null )
+            {
+                return;
+            }
+
+            BaseItemString = referenceStorable.Name;
+
+            amount = referenceStorable.Amount;
+        }
+
+        public override void Load( object dataObj )
+        {
+            base.Load( dataObj );
+
+            Surrogate StorableSurrogate = dataObj as Surrogate;
+
+            Storable StorableItem = new Storable( StorableSurrogate.BaseItemString, StorableSurrogate.amount );
+
+            referenceStorable = StorableItem;
+        }
+
+        public override string ToString()
+        {
+            return BaseItemString + ", " + amount;
+        }
+    }
+
+
+
+
+
     [SerializeField]
     //use as readonly
     public PersistentItem Base;
@@ -44,7 +103,7 @@ public class Storable
 
     public Storable( string Name, float Amount ) : this( PersistentItem.CreateOrGet( Name ), Amount )
     {
-
+        Debug.Log( Name );
     }
 
 
@@ -62,7 +121,7 @@ public class Storable
     public override bool Equals( System.Object obj )
     {
         Storable res = obj as Storable;
-        if( res == null )
+        if ( res == null )
             return false;
         else
             return Base == res.Base;
@@ -73,11 +132,11 @@ public class Storable
     {
         List<Storable> output = new List<Storable>();
 
-        for( int i = 0; i < resources.Count; i++ )
+        for ( int i = 0; i < resources.Count; i++ )
         {
             Storable res = output.Find( x => x.Equals( resources[i] ) );
 
-            if( res == null )
+            if ( res == null )
             {
                 res = resources[i].Copy( 0 );
                 output.Add( res );
@@ -96,10 +155,10 @@ public class Storable
         List<Storable> Needed = CombineInstancesOfResources( needed );
         List<Storable> Available = CombineInstancesOfResources( available );
 
-        for( int i = 0; i < Needed.Count; i++ )
+        for ( int i = 0; i < Needed.Count; i++ )
         {
 
-            if( needed[i] == null || needed[i].Base == null )
+            if ( needed[i] == null || needed[i].Base == null )
             {
                 continue;
             }
@@ -108,7 +167,7 @@ public class Storable
 
             float comparison = 0f;
 
-            if( availRes != null )
+            if ( availRes != null )
             {
                 comparison = ( availRes.Amount / Needed[i].Amount );
             }
@@ -125,9 +184,9 @@ public class Storable
 
         Dictionary<Storable, float> avail = NormalizedAvailableAmounts( needed, available );
 
-        foreach( KeyValuePair<Storable, float> k in avail )
+        foreach ( KeyValuePair<Storable, float> k in avail )
         {
-            if( k.Value < smallest )
+            if ( k.Value < smallest )
             {
                 smallest = k.Value;
             }

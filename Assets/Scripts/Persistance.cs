@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
 using System.Collections;
@@ -16,9 +16,14 @@ public static class Persistence
     public static readonly string WorldFileName = "World";
     public static readonly string GameFileName = "gameData";
     public static readonly string MetaFileName = "meta";
+
+    public static readonly string ResourceObjectPath = "ResourceObjects/";
+
+
     public static bool InitializedModel = false;
 
-    public static void InitializeModel( )
+
+    public static void InitializeModel()
     {
         if ( !InitializedModel )
         {
@@ -27,6 +32,21 @@ public static class Persistence
             model.Add( typeof( Vector2 ), false ).SetSurrogate( typeof( Vector2Surrogate ) );
             model.Add( typeof( Vector3 ), false ).SetSurrogate( typeof( Vector3Surrogate ) );
             model.Add( typeof( Quaternion ), false ).SetSurrogate( typeof( QuaternionSurrogate ) );
+
+            model.Add( typeof( ProtoBase ), true );
+
+            model.Add( typeof( Storable.Surrogate ), true );
+
+            //structure behaviours
+            model.Add( typeof( ResourceProducer.Surrogate ), true );
+            model.Add( typeof( StructureBehaviour.Surrogate ), true );
+            model.Add( typeof( Storage.Surrogate ), true );
+
+            //entity
+            model.Add( typeof( Entity.Surrogate ), true );
+            model.Add( typeof( Structure.Surrogate ), true );
+            model.Add( typeof( Mineable.Surrogate ), true );
+            
 
             InitializedModel = true;
         }
@@ -62,6 +82,9 @@ public static class Persistence
         {
             File.Delete( path );
         }
+
+        Debug.Log( "Saved" );
+
         File.Move( tmpPath, path );
     }
 
@@ -182,7 +205,7 @@ public static class Persistence
     //    return overworldData;
     //}
 
-    public static string[] GetSavegames( )
+    public static string[] GetSavegames()
     {
         string[] savegamePaths = Directory.GetDirectories( Persistence.SavegameRoot );
 
